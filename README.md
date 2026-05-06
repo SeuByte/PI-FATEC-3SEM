@@ -1,13 +1,24 @@
-```mermaid
-gitGraph
-    commit
-    commit
-    branch pi3-01
-    branch pi3-02
-    checkout pi3-01
-    commit
-    commit
-    checkout main
-    checkout pi3-02
-    commit
+# COMO RODAR O PROJETO
+```
+    pip install virtualenv
+    python -m virtualenv venv
+```
+## WINDOWS
+```
+    cd venv
+    cd Scripts
+    activate.bat
+    cd ../..
+```
+## LINUX
+```
+    source .venv/bin/activate
+```
+## INSTALAR DEPENDÊNCIAS
+```
+    pip install -r requiriments.txt
+```
+## INICIAR PROJETO
+```
+    python manage.py runserver
 ```
