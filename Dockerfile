@@ -1,12 +1,16 @@
-FROM python:3.12-slim
+version: "3.8"
 
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+services:
+    mongodb:
+        image: mongo:7
+        container_name: mongodb
+        restart: always
+        ports:
+            "27017:27017"
+        enviroment:
+            MONGO_INITDB_ROOT_USERNAME: $(MONGO_INITDB_ROOT_USERNAME)
+            MONGO_INITDB_ROOT_PASSWORD: $(MONGO_INITDB_ROOT_PASSWORD)
+        volumes:
+            mongodb_data:/data/db
+volumes:
+    mongodb_data:
