@@ -10,6 +10,9 @@
 - Assinaturas
 - Dicas
 - Sobre Nós
+- Carrinho
+- Checkout
+
 
 # Status: 
 Em desenvolvimento, ainda serão criadas novas telas.
