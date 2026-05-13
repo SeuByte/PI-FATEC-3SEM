@@ -1,5 +1,14 @@
 asgiref==3.11.1
 Django==5.2.14
+djangorestframework==3.17.1
+dnspython==2.8.0
+et_xmlfile==2.0.0
+mongoengine==0.29.3
+numpy==2.4.4
+openpyxl==3.1.5
+pandas==3.0.3
+pymongo==4.17.0
+python-dateutil==2.9.0.post0
+six==1.17.0
 sqlparse==0.5.5
 tzdata==2026.2
-djangorestframework==3.17.1
