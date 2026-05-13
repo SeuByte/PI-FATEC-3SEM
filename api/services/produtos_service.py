@@ -1,22 +1,38 @@
+from core.models import Produtos
 
-class Produtos:
+
+class ProdutosService:
     
     @staticmethod
     def listar():
-        pass
-
+        return Produtos.objects()
+    
     @staticmethod
     def listar_por_id(id):
-        pass
-
+        return Produtos.objects(id=id).first()
+    
     @staticmethod
     def criar(data):
-        pass
+        produto = Produtos(**data)
+        produto.save()
+        return produto
 
     @staticmethod
     def atualizar(id, data):
-        pass
+      produto = Produtos.objects(id=id).first()
+      if not produto:
+          return None
+      produto.update(**data) 
+      
+      return Produtos.objects(id=id).first()
+
 
     @staticmethod
     def deletar(id):
-        pass
+        produto = Produtos.objects(id=id).first()
+        
+        if not produto:
+            return False
+        
+        produto.delete()
+        return True
