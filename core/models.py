@@ -17,9 +17,9 @@ class Clientes(me.Document):
     
     
 class Produtos(me.Document):
-    Estoque = me.IntField(required=True)
+    Estoque = me.Decimal128Field(required=True)
     Nome = me.StringField(required=True)
     Unidade = me.StringField(required=True)
-    Valor_venda = me.FloatField(required=True)
+    Valor_venda = me.Decimal128Field(required=True)
     Grupo = me.StringField(required=True)
-    Preco_100g = me.FloatField(required=True)
+    Preco_100g = me.Decimal128Field(required=True)
