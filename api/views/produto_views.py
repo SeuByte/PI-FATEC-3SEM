@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view
-from api.services.produtos_service import ProdutosService
+from api.services.produto_service import ProdutosService
 from api.utils.response import success, error
 from api.serializers.produto_serializer import ProdutoSerializer
 
