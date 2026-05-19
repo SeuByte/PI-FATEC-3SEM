@@ -10,6 +10,17 @@ class ListarCliente(APIView):
         data = [ClienteSerializer(obj=c).to_representation() for c in clientes]
         return Response(data)
     
+class LoginCliente(APIView):
+    def post(self, request):
+        Email = request.data.get('Email')
+        Senha = request.data.get('Senha')
+        cliente = Clientes.objects.filter(Email=Email, Senha=Senha).first()
+        if cliente:
+           return Response({"msg": "Login feito com sucesso!"})
+
+        return Response({"msg": "Conta não encontrada :("}, status=400)
+
+
 class RegistroView(APIView):
     def post(self, request):
         serializer = ClienteSerializer(data=request.data)
