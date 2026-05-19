@@ -23,6 +23,9 @@ class LoginCliente(APIView):
 
 class RegistroView(APIView):
     def post(self, request):
+        email = request.data.get('Email')
+        if Clientes.objects.filter(Email=email).first():
+            return Response( {"mensagem": "Já existe um usuário cadastrado com esse e-mail !"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = ClienteSerializer(data=request.data)
         try:
             

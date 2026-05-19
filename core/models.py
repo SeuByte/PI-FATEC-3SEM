@@ -2,7 +2,7 @@ import mongoengine as me
 
 class Clientes(me.Document):
     Nome = me.StringField(required=True)
-    Email = me.StringField(required=True)
+    Email = me.EmailField(required=True, unique=True, blank=False, null=False)
     Senha = me.StringField(required=True)
     Telefone = me.StringField(required=True)
     Data_nasc = me.DateField(required=True)
