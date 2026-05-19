@@ -1,17 +1,20 @@
 #ClienteSerializer implementa as normas especificas para clientes.
 #Exemplo: Para CPF é necessario 11 digitos.
 from core.models import Clientes
+from datetime import date
 from .base_serializer import BaseSerializer
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
 class ClienteSerializer(BaseSerializer):
    def to_representation(self):
+       data_formatada = self.obj.Data_nasc.strftime("%Y-%m-%d") if self.obj.Data_nasc else None
        return {
          "id": str(self.obj.id),
          "Nome": self.obj.Nome,
          "Email": self.obj.Email,
          "Telefone": self.obj.Telefone,
-         "Data_nasc": self.obj.Data_nasc,
+         "Celular":self.obj.Celular,
+         "Data_nasc": data_formatada,
          "CPF": self.obj.CPF,
          "CEP": self.obj.CEP,
          "Endereco": self.obj.Endereco,
@@ -34,12 +37,33 @@ class ClienteSerializer(BaseSerializer):
       if len(cpf_limpo) != 11:
          raise ValueError("O CPF deve conter 11 digitos !")
       return cpf_limpo
+     
+   def validate_Email(self, value):
+      if "@" not in value:
+         raise ValueError("O email deve conter @ !")
+         
+      if Clientes.objects(Email=value).first():
+         raise ValueError("Esta conta já existe.")
+      return value
     
-   def validate_Tel(self, value):
-   
-       if len(value) < 11:
-          raise ValueError("O telefone deve conter 11 digitos")
-       return self.validate_Tel
+   def validate_CEP(self, value):
+      cep_limpo = ''.join(filter(str.isdigit, str(value)))
+      if len(cep_limpo) != 8:
+         raise ValueError("O CEP deve conter 8 digitos !")
+ 
+    
+   def validate_Celular(self, value):
+      cel_limpo = ''.join(filter(str.isdigit, str(value)))
+      if len(cel_limpo) != 11:
+         raise ValueError("O celular deve conter 11 digitos")
+      return cel_limpo 
+    
+    
+   def validate_Telefone(self, value):
+      tel_limpo = ''.join(filter(str.isdigit, str(value)))
+      if len(tel_limpo) < 10:
+          raise ValueError("O telefone deve conter 10 digitos")
+      return tel_limpo
     
     
     

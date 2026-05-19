@@ -23,14 +23,9 @@ class LoginCliente(APIView):
 
 class RegistroView(APIView):
     def post(self, request):
-        email = request.data.get('Email')
-        if Clientes.objects.filter(Email=email).first():
-            return Response( {"mensagem": "Já existe um usuário cadastrado com esse e-mail !"}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = ClienteSerializer(data=request.data)
-        try:
-            
-            if serializer.is_valid():
-                serializer.save()
-                return Response({"mensagem": "Cliente cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
-        except Exception as e:
-         return Response({"erro": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ClienteSerializer(data=request.data)    
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"mensagem": "Cliente cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
+       
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
