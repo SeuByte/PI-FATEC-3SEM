@@ -1,13 +1,13 @@
 #ClienteSerializer implementa as normas especificas para clientes.
 #Exemplo: Para CPF é necessario 11 digitos.
 from core.models import Clientes
-from datetime import date
+from datetime import date, datetime
 from .base_serializer import BaseSerializer
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
 class ClienteSerializer(BaseSerializer):
    def to_representation(self):
-       data_formatada = self.obj.Data_nasc.strftime("%Y-%m-%d") if self.obj.Data_nasc else None
+       data_formatada = self.obj.Data_nasc.strftime("%D-%M-%Y") if self.obj.Data_nasc else None
        return {
          "id": str(self.obj.id),
          "Nome": self.obj.Nome,
@@ -64,7 +64,27 @@ class ClienteSerializer(BaseSerializer):
       if len(tel_limpo) < 10:
           raise ValueError("O telefone deve conter 10 digitos")
       return tel_limpo
-    
+   
+   
+   def validate_Data_nasc(self, value):
+         if isinstance(value, date):
+            return value
+         
+         try:
+            data_str = str(value).replace('-', '/')
+            
+            dia, mes, ano = data_str.split('/')
+            
+            data_obj = date(int(ano), int(mes), int(dia))
+            
+         except (ValueError, IndexError):
+            raise ValueError("Formato de data inválido. Use o padrão DD/MM/AAAA (ex: 30/05/2026)")
+
+         if data_obj > date.today():
+            raise ValueError("A data não pode ser futura")
+         
+         return data_obj
+      
     
     
    def save(self):
