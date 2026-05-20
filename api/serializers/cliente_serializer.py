@@ -6,8 +6,11 @@ from .base_serializer import BaseSerializer
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
 class ClienteSerializer(BaseSerializer):
+   MENSAGENS ={
+      
+   }
    def to_representation(self):
-       data_formatada = self.obj.Data_nasc.strftime("%D-%M-%Y") if self.obj.Data_nasc else None
+       data_formatada = self.obj.Data_nasc.strftime("%d-%m-%Y") if self.obj.Data_nasc else None
        return {
          "id": str(self.obj.id),
          "Nome": self.obj.Nome,
@@ -37,7 +40,23 @@ class ClienteSerializer(BaseSerializer):
       if len(cpf_limpo) != 11:
          raise ValueError("O CPF deve conter 11 digitos !")
       return cpf_limpo
-     
+   
+   def validate_Nome(self, value):
+      if not value or str(value).strip == "":
+         raise ValueError("O campo nome é obrigatório.")
+      return value
+   
+   def validate_Endereco(self, value):
+      if not value or str(value).strip == "":
+         raise ValueError("O campo Endereço é obrigatório.")
+      
+   def validate_Bairro(self, value):
+      if not value or str(value).strip == "":
+         raise ValueError("O campo Bairro é obrigatório.")
+      
+   def validate_Numero(self, value):
+      if not value or str(value).strip == "":
+         raise ValueError("O campo Numero é obrigatório.")
    def validate_Email(self, value):
       if "@" not in value:
          raise ValueError("O email deve conter @ !")
