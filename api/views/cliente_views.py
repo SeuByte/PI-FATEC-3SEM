@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response 
 from rest_framework import status
-from api.serializers.cliente_serializer import ClienteSerializer
+from api.serializers.cliente_serializer import ClienteSerializer, ResetPasswordSerializer
 from core.models import Clientes
 
 class ListarCliente(APIView):
@@ -29,3 +29,20 @@ class RegistroView(APIView):
             return Response({"mensagem": "Cliente cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ResetarSenha(APIView):
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = serializer.validated_data
+        email = data.get('email')
+        new_password = data.get('new_password')
+        try:
+            user = Clientes.objects.get(Email=email)
+            user.Senha = new_password
+            user.save()
+            return Response({"mensagem": "Senha alterada com sucesso!"}, status=status.HTTP_200_OK)
+        except Clientes.DoesNotExist:
+            return Response({"mensagem": "Usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)

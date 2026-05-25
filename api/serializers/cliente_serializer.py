@@ -1,8 +1,9 @@
 #ClienteSerializer implementa as normas especificas para clientes.
 #Exemplo: Para CPF é necessario 11 digitos.
 from core.models import Clientes
-from datetime import date, datetime
+from datetime import date
 from .base_serializer import BaseSerializer
+from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
 class ClienteSerializer(BaseSerializer):
@@ -42,21 +43,25 @@ class ClienteSerializer(BaseSerializer):
       return cpf_limpo
    
    def validate_Nome(self, value):
-      if not value or str(value).strip == "":
+      if not value or str(value).strip() == "":
          raise ValueError("O campo nome é obrigatório.")
       return value
    
    def validate_Endereco(self, value):
-      if not value or str(value).strip == "":
+      if not value or str(value).strip() == "":
          raise ValueError("O campo Endereço é obrigatório.")
+      return value
       
    def validate_Bairro(self, value):
-      if not value or str(value).strip == "":
+      if not value or str(value).strip() == "":
          raise ValueError("O campo Bairro é obrigatório.")
+      return value
       
    def validate_Numero(self, value):
-      if not value or str(value).strip == "":
+      if not value or str(value).strip() == "":
          raise ValueError("O campo Numero é obrigatório.")
+      return value
+   
    def validate_Email(self, value):
       if "@" not in value:
          raise ValueError("O email deve conter @ !")
@@ -69,7 +74,7 @@ class ClienteSerializer(BaseSerializer):
       cep_limpo = ''.join(filter(str.isdigit, str(value)))
       if len(cep_limpo) != 8:
          raise ValueError("O CEP deve conter 8 digitos !")
- 
+      return cep_limpo 
     
    def validate_Celular(self, value):
       cel_limpo = ''.join(filter(str.isdigit, str(value)))
@@ -104,7 +109,15 @@ class ClienteSerializer(BaseSerializer):
          
          return data_obj
       
-    
-    
+      
    def save(self):
-       return super().save(Clientes)
+      return super().save(Clientes)
+
+   
+   def save(self):
+      pass
+      
+      
+    
+    
+   
