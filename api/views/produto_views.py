@@ -39,10 +39,12 @@ def listar_produto_id(request, id):
 def apagar_produto(request, id):
     try:
         produto = ProdutosService.deletar(id)
-        return success()
 
         if not produto:
-            return error(message="Produto não encontrado !", status = 404)
+            return error(message="Produto não encontrado !", status = 204)
+        return success(message="Produto deletado com sucesso !")
         serializer = ProdutoSerializer(obj=produto)
     except Exception as e:
         return error(message=str(e), status = 500)
+    
+
