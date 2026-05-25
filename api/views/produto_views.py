@@ -26,10 +26,23 @@ def listar_produto_id(request, id):
         produto = ProdutosService.listar_por_id(id)
     
         if not produto:
-            return error(message="Produto não encontrado", status_code = 404)
+            return error(message="Produto não encontrado", status = 404)
         serializer = ProdutoSerializer(obj=produto)
         
         return success(serializer.to_representation())
     
     except Exception as e:
-        return error(message=str(e), status_code=500)
+        return error(message=str(e), status=500)
+
+
+@api_view(["DELETE"])
+def apagar_produto(request, id):
+    try:
+        produto = ProdutosService.deletar(id)
+        return success()
+
+        if not produto:
+            return error(message="Produto não encontrado !", status = 404)
+        serializer = ProdutoSerializer(obj=produto)
+    except Exception as e:
+        return error(message=str(e), status = 500)
