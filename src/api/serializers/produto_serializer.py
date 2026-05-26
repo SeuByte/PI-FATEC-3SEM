@@ -1,7 +1,7 @@
 #ProdutoSerializer é onde será implementado as normas especificas para Produtos
 #Exemplo: É necessario que o produto esteja vinculado ao um grupo para ser registrado.
 
-from core.models import Produtos
+from src.core.models import Produtos
 from .base_serializer import BaseSerializer
 from decimal import Decimal, ROUND_HALF_UP
 

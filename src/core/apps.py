@@ -3,7 +3,7 @@ from mongoengine import connect
 
 
 class CoreConfig(AppConfig):
-    name = 'core'
+    name = 'src.core'
     
     def ready(self):
         connect(

@@ -1,6 +1,31 @@
-.vscode/
+# Ambiente virtual
 venv/
 .env
+
+# VSCode
+.vscode/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Banco local
 db.sqlite3
+
+# Arquivos de cache/teste
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Django
+staticfiles/
+media/
+
+# Logs
+*.log

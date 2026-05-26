@@ -1,4 +1,4 @@
-from core.models import Produtos
+from src.core.models import Produtos
 
 
 class ProdutosService:

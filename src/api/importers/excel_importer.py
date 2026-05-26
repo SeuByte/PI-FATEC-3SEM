@@ -4,7 +4,7 @@
 #3 -importa_excel(r"C:\Users\macro\Downloads\PRODUTOS LOJA 27-4.xlsx")
 
 import pandas as pd
-from core.models import Produtos
+from src.core.models import Produtos
 
 
 def importa_excel(file_path):

@@ -1,0 +1,134 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class BaseSerializer {
+  - obj
+  - data_input
+  - validated_data
+  - errors
+  + __init__()
+  + to_representation()
+  + is_valid()
+  + save(model_class)
+}
+
+class ClienteSerializer {
+  + to_representation()
+  + validate_Senha()
+  + validate_CPF()
+  + validate_Nome()
+  + validate_Endereco()
+  + validate_Bairro()
+  + validate_Numero()
+  + validate_Email()
+  + validate_CEP()
+  + validate_Celular()
+  + validate_Telefone()
+  + validate_Data_nasc()
+  + save()
+}
+
+class ProdutoSerializer {
+  + to_representation()
+  + is_valid()
+  + save()
+}
+
+class ClientesService {
+  + listar()
+}
+
+class ProdutosService {
+  + listar()
+  + listar_por_id(id)
+  + criar(data)
+  + atualizar(id, data)
+  + deletar(id)
+}
+
+class Clientes {
+  - Nome
+  - Email
+  - Senha
+  - Celular
+  - Telefone
+  - Data_nasc
+  - CPF
+  - CEP
+  - Endereco
+  - Bairro
+  - Numero
+  - Complemento
+  - Cidade
+  - Estado
+}
+
+class Produtos {
+  - Estoque
+  - Nome
+  - Unidade
+  - Valor_venda
+  - Grupo
+  - Preco_100g
+}
+
+class ListarCliente {
+  + get(request)
+}
+
+class LoginCliente {
+  + post(request)
+}
+
+class RegistroView {
+  + post(request)
+}
+
+class ResetarSenha {
+  + post(request)
+}
+
+class listar_produtos {
+  + request
+}
+
+class listar_produto_id {
+  + id
+}
+
+class api_utils_response {
+  + success(data, message, status)
+  + error(message, status)
+}
+
+BaseSerializer <|-- ClienteSerializer
+BaseSerializer <|-- ProdutoSerializer
+ClienteSerializer --> Clientes : save()
+ProdutoSerializer --> Produtos : save()
+ClientesService ..> Clientes
+ProdutosService ..> Produtos
+ListarCliente --> Clientes
+RegistroView --> ClienteSerializer
+LoginCliente --> Clientes
+ResetarSenha --> Clientes
+listar_produtos --> ProdutosService
+listar_produto_id --> ProdutosService
+
+note right of ProdutosService
+  retorna produtos, busca por id,
+  cria, atualiza e deleta produtos
+end note
+
+note right of ClientesService
+  atualmente sem implementação
+end note
+
+note bottom
+  Possíveis classes futuras:
+  ClienteService, ResetPasswordSerializer,
+  AuthService, Pedido, ProdutoGrupo,
+  Carrinho, PagamentoService,
+  ProdutoViewSet / ClienteViewSet
+end note
+
+@enduml

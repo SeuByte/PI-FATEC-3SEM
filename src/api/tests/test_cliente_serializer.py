@@ -2,8 +2,8 @@ import pytest
 import mongomock
 from datetime import date
 from mongoengine import connect
-from api.serializers.cliente_serializer import ClienteSerializer
-from core.models import Clientes
+from src.api.serializers.cliente_serializer import ClienteSerializer
+from src.core.models import Clientes
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_db():

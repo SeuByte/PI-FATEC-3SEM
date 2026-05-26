@@ -1,11 +1,12 @@
 #ClienteSerializer implementa as normas especificas para clientes.
 #Exemplo: Para CPF é necessario 11 digitos.
-from core.models import Clientes
+from src.core.models import Clientes
 from datetime import date
 from .base_serializer import BaseSerializer
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
+
 class ClienteSerializer(BaseSerializer):
    MENSAGENS ={
       
@@ -116,6 +117,8 @@ class ClienteSerializer(BaseSerializer):
    
    def save(self):
       pass
+   
+   
       
       
     

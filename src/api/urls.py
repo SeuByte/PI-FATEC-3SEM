@@ -1,6 +1,6 @@
 from django.urls import path
-from api.views.produto_views import listar_produtos, listar_produto_id
-from api.views.cliente_views import ListarCliente, RegistroView, LoginCliente, ResetarSenha
+from src.api.views.produto_views import listar_produtos, listar_produto_id
+from src.api.views.cliente_views import ListarCliente, RegistroView, LoginCliente, ResetarSenha
 
 urlpatterns = [
  path('produtos/', listar_produtos),

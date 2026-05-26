@@ -1,5 +1,5 @@
 import pytest
-from api.serializers.base_serializer import BaseSerializer
+from src.api.serializers.base_serializer import BaseSerializer
 
 # Classe de teste para simular um Serializer real
 class ConcreteSerializer(BaseSerializer):
