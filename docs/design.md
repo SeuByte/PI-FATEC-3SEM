@@ -31,4 +31,7 @@
 - Excluir Usuários
 
 # Status: 
-Em desenvolvimento, ainda serão criadas novas telas.
+
+ [Link para acesso ao protótipo](https://www.figma.com/design/cGiqHGcfxi3NFulgIkk9Do/Untitled?node-id=0-1&t=0XmVyy6ISuaV7USq-1)
+
+<img width="1277" height="471" alt="Image" src="https://github.com/user-attachments/assets/46620791-0bd8-47e8-832e-72501c983a97" />
