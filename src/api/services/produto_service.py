@@ -19,12 +19,7 @@ class ProdutosService:
 
     @staticmethod
     def atualizar(id, data):
-      produto = Produtos.objects(id=id).first()
-      if not produto:
-          return None
-      produto.update(**data) 
-      
-      return Produtos.objects(id=id).first()
+      pass
 
 
     @staticmethod
