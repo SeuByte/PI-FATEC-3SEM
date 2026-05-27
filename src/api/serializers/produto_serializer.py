@@ -4,6 +4,7 @@
 from src.core.models import Produtos
 from .base_serializer import BaseSerializer
 from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation
 
 def format_money(value):
     if value is None: return "0.00"
@@ -13,6 +14,8 @@ def format_money(value):
             rounding=ROUND_HALF_UP
         )
     )
+    
+required_fields = ['Nome', 'Estoque', 'Unidade', 'Valor_venda', 'Grupo', 'Preco_100g']
 
 class ProdutoSerializer(BaseSerializer):
 
@@ -26,14 +29,54 @@ class ProdutoSerializer(BaseSerializer):
             "Preco_100g": format_money(getattr(self.obj, 'Preco_100g', 0)),
         }
 
-    def is_valid(self):
-        if not self.data_input.get("Nome"):
-            raise Exception("O Nome do produto é obrigatório")
-        
-        if not self.data_input.get("Grupo"):
-            raise Exception("O Produto deve estar registrado em um Grupo")
+    def validate_Nome(self, value):
+        if not value:
+            raise ValueError("O Nome do produto é obrigatório")
+        return value
+    
+    def validate_Grupo(self, value):
+        if not value:
+            raise ValueError("O produto deve pertencer a um grupo!")
+        return value
+    
+    def validate_Estoque(self, value):
+        if value == "":
+            raise ValueError("O produto deve conter estoque a cima de zero !")
+        try:
+            estoque = Decimal(str(value))
             
-        return True
-
+            if estoque < 0:
+                raise ValueError("O produto não pode ter estoque negativo !")
+            return estoque
+        except (InvalidOperation, ValueError, TypeError) as e:
+            print(f"DEBUG: Erro na conversão Decimal: {e}")
+            raise ValueError("O estoque deve conter um numero decimal válido, exemplo: 50.00")
+    
+    def validate_Unidade(self, value):
+        if not value:
+            raise ValueError("O produto deve conter o tipo de Unidade !")
+        return value
+        
+    def validate_Valor_venda(self, value):
+        if value == "" :
+            raise ValueError("O valor venda é necessario.")
+        return value
+    
+    def validate_Preco_100g(self, value):
+        if value == "":
+            raise ValueError("O preço de 100g é necessario.")
+        try:
+            preco_100g = Decimal(str(value))
+            if preco_100g < 0:
+                raise ValueError("O preço de 100g não pode ser negativo !")
+            return preco_100g
+        except(InvalidOperation, ValueError, TypeError):
+            raise ValueError("O preço de 100g deve conter um numero decimal válido, exemplo: 7.00")
+                
+            
+    
+    
+    
+    
     def save(self):
         return super().save(Produtos)

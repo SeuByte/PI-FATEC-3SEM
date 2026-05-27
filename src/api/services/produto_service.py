@@ -13,9 +13,11 @@ class ProdutosService:
     
     @staticmethod
     def criar(data):
-        produto = Produtos(**data)
-        produto.save()
-        return produto
+        
+            produto = Produtos(**data)
+            produto.save()
+            return produto
+        
 
     @staticmethod
     def atualizar(id, data):

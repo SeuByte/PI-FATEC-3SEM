@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from src.api.services.produto_service import ProdutosService
 from src.api.utils.response import success, error
 from src.api.serializers.produto_serializer import ProdutoSerializer
-from src.core.models import Produtos
+
 
 
 
@@ -35,7 +36,24 @@ def listar_produto_id(request, id):
     except Exception as e:
         return error(message=str(e), status = 500)
     
+
+@api_view(["POST"])
+def criar_produto(request):
+    try:
+        data = request.data
+       
+        serializer = ProdutoSerializer(data=data)
+        
+        if serializer.is_valid():
+            produto = ProdutosService.criar(serializer.validated_data)
+            return success(message="Produto criado com sucesso!", status = 200)
+        return error(serializer.errors, status=400)    
+        
+    except Exception as e:
+        return error(message=str(e), status = 500)
+ 
     
+
 @api_view(["DELETE"])
 def deletar_produto(request, id):
     try:
@@ -54,21 +72,8 @@ def deletar_produto(request, id):
     
 @api_view(["PUT"])
 def editar_produto(request, id):
-    data = request.data
-    try:
-        produto = ProdutosService.atualizar(id, data)
-        
-        if not produto:
-            return error(message="Produto não existe ou não pode ser editado.", status = 404)
-        serializer = ProdutoSerializer( data=request.data, obj=produto)
-        if not serializer.is_valid():
-            return error(serializer.errors, status = 400)
-        produto_atualizado = ProdutosService.atualizar(id, serializer.validated_data)
-        return success(message="Produto editado com sucesso!", status= 200)
-            
-        
-    except Exception as e:
-        return error(message=str(e), status = 500)
+    pass
+
     
     
     
