@@ -1,4 +1,5 @@
 from src.core.models import Produtos
+from decimal import Decimal
 
 
 class ProdutosService:
@@ -21,7 +22,16 @@ class ProdutosService:
 
     @staticmethod
     def atualizar(id, data):
-      pass
+        produto = Produtos.objects.get(id=id)
+
+        for campo, valor in data.items():
+            if campo in ["Valor_venda", "Estoque", "Preco_100g"]:
+                valor = Decimal(str(valor))
+
+            setattr(produto, campo, valor)
+
+        produto.save()
+        return produto
 
 
     @staticmethod

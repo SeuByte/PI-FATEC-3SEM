@@ -61,7 +61,7 @@ def deletar_produto(request, id):
         
         if not produto:
             return error(message="Produto não encontrado.", status = 404)
-        serializer = ProdutoSerializer(obj=produto)
+        serializer = ProdutosSerializer(obj=produto)
         return success(message="Produto deletado com sucesso !", status = 200)
     
 
@@ -72,7 +72,20 @@ def deletar_produto(request, id):
     
 @api_view(["PUT"])
 def editar_produto(request, id):
-    pass
+    try:
+        data = request.data
+        serializer = ProdutoSerializer(data=data)
+        
+        if serializer.is_valid():
+            produto = ProdutosService.atualizar(id, serializer.validated_data)
+            return success(message="Produto editado com sucesso!.", status = 200)
+        return error(serializer.errors, status = 400)
+    except Exception as e:
+        return error(message=str(e), status = 500)
+        pass
+
+        
+
 
     
     

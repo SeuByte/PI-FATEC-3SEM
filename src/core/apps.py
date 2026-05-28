@@ -8,7 +8,7 @@ class CoreConfig(AppConfig):
     def ready(self):
         connect(
             db="Teste",
-            host="mongodb://localhost:27017/"
+            host="mongodb://mongodb:27017/"
         )
 
 
