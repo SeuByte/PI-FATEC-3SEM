@@ -30,9 +30,19 @@ class ProdutoSerializer(BaseSerializer):
         }
 
     def validate_Nome(self, value):
-        if not value:
+        nome = value.strip()
+        produto_existente = Produtos.objects.filter(
+            Nome__iexact = nome
+        ).first()
+        if produto_existente:
+            raise ValueError("Já existe um produto com esse nome !")
+        if not nome:
             raise ValueError("O Nome do produto é obrigatório")
-        return value
+        if len(nome.strip()) < 3:
+            raise ValueError("O nome do produto deve conter ao menos 3 caracteres")
+        if len(nome.strip()) > 50:
+            raise ValueError("O nome do produto é muito grande")
+        return nome
     
     def validate_Grupo(self, value):
         if not value:

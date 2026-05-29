@@ -4,7 +4,7 @@ from src.api.views.cliente_views import ListarCliente, RegistroView, LoginClient
 
 urlpatterns = [
  path('produtos/', listar_produtos),
- path('produtos/<int:id>/', listar_produto_id),
+ path('produtos/<str:id>/', listar_produto_id),
  path('deletar_produto/<str:id>/', deletar_produto), #Já está funcionando
  path('editar_produto/<str:id>/', editar_produto),#Ainda não está funcionando
  path('criar_produto/', criar_produto),
