@@ -15,15 +15,15 @@ def format_money(value):
         )
     )
     
-required_fields = ['Nome', 'Estoque', 'Unidade', 'Valor_venda', 'Grupo', 'Preco_100g']
+required_fields = ['Estoque', 'Nome', 'Unidade', 'Valor_venda', 'Grupo', 'Preco_100g']
 
 class ProdutoSerializer(BaseSerializer):
 
     def to_representation(self):
         return {
             "id": str(self.obj.id),
-            "Nome": getattr(self.obj, 'Nome', ''),
             "Estoque": getattr(self.obj, 'Estoque', 0),
+            "Nome": getattr(self.obj, 'Nome', ''),
             "Valor_venda": format_money(getattr(self.obj, 'Valor_venda', 0)),
             "Grupo": getattr(self.obj, 'Grupo', ''),
             "Preco_100g": format_money(getattr(self.obj, 'Preco_100g', 0)),
@@ -31,17 +31,23 @@ class ProdutoSerializer(BaseSerializer):
 
     def validate_Nome(self, value):
         nome = value.strip()
-        produto_existente = Produtos.objects.filter(
-            Nome__iexact = nome
-        ).first()
-        if produto_existente:
+        
+        query = Produtos.objects(Nome__iexact=nome)
+        
+        if hasattr(self, 'obj') and self.obj and getattr(self.obj, 'id', None):
+            query = query(id__ne=self.obj.id)
+            
+        if query.count() > 0:
             raise ValueError("Já existe um produto com esse nome !")
-        if not nome:
-            raise ValueError("O Nome do produto é obrigatório")
-        if len(nome.strip()) < 3:
+            
+        # Validações de tamanho
+        if not nome or not nome.strip():
+            raise ValueError("O nome é obrigatório.")
+        if len(nome) < 3:
             raise ValueError("O nome do produto deve conter ao menos 3 caracteres")
-        if len(nome.strip()) > 50:
+        if len(nome) > 100:
             raise ValueError("O nome do produto é muito grande")
+            
         return nome
     
     def validate_Grupo(self, value):
@@ -60,7 +66,7 @@ class ProdutoSerializer(BaseSerializer):
             return estoque
         except (InvalidOperation, ValueError, TypeError) as e:
             print(f"DEBUG: Erro na conversão Decimal: {e}")
-            raise ValueError("O estoque deve conter um numero decimal válido, exemplo: 50.00")
+            raise ValueError("O estoque deve conter um número decimal válido, exemplo: 50.00")
     
     def validate_Unidade(self, value):
         if not value:
@@ -70,18 +76,29 @@ class ProdutoSerializer(BaseSerializer):
     def validate_Valor_venda(self, value):
         if value == "" :
             raise ValueError("O valor venda é necessario.")
-        return value
+        try:
+            valor_venda = Decimal(str(value))
+        except (InvalidOperation, ValueError, TypeError):
+            raise ValueError("O valor de venda deve ser um numero decimal válido")
+        if valor_venda < 0:
+                raise ValueError("O valor venda não pode ser negativo")
+        return valor_venda
+      
     
     def validate_Preco_100g(self, value):
         if value == "":
             raise ValueError("O preço de 100g é necessario.")
+        
         try:
             preco_100g = Decimal(str(value))
-            if preco_100g < 0:
-                raise ValueError("O preço de 100g não pode ser negativo !")
-            return preco_100g
-        except(InvalidOperation, ValueError, TypeError):
-            raise ValueError("O preço de 100g deve conter um numero decimal válido, exemplo: 7.00")
+        except (InvalidOperation, ValueError, TypeError):
+            raise ValueError("O valor deve ser um numero decimal válido")
+            
+        if preco_100g < 0:
+            # Esta mensagem só aparece se for um número, mas negativo
+            raise ValueError("O preço de 100g não pode ser negativo !")
+            
+        return preco_100g
                 
             
     
@@ -89,4 +106,8 @@ class ProdutoSerializer(BaseSerializer):
     
     
     def save(self):
-        return super().save(Produtos)
+        # Garante que o objeto self.obj exista antes de salvar
+        if not hasattr(self, 'obj') or self.obj is None:
+            raise ValueError("Nenhum objeto para salvar.")
+        
+        return self.obj.save()

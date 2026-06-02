@@ -61,7 +61,7 @@ def deletar_produto(request, id):
         
         if not produto:
             return error(message="Produto não encontrado.", status = 404)
-        serializer = ProdutosSerializer(obj=produto)
+        serializer = ProdutoSerializer(obj=produto)
         return success(message="Produto deletado com sucesso !", status = 200)
     
 
@@ -82,7 +82,7 @@ def editar_produto(request, id):
         return error(serializer.errors, status = 400)
     except Exception as e:
         return error(message=str(e), status = 500)
-        pass
+        
 
         
 
