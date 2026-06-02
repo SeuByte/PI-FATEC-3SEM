@@ -1,10 +1,11 @@
 #ProdutoSerializer é onde será implementado as normas especificas para Produtos
 #Exemplo: É necessario que o produto esteja vinculado ao um grupo para ser registrado.
 
-from src.core.models import Produtos
+from src.api.models import Produtos
 from .base_serializer import BaseSerializer
 from decimal import Decimal, ROUND_HALF_UP
 from decimal import Decimal, InvalidOperation
+from bson import ObjectId
 
 def format_money(value):
     if value is None: return "0.00"
@@ -31,14 +32,16 @@ class ProdutoSerializer(BaseSerializer):
 
     def validate_Nome(self, value):
         nome = value.strip()
-        
         query = Produtos.objects(Nome__iexact=nome)
         
-        if hasattr(self, 'obj') and self.obj and getattr(self.obj, 'id', None):
-            query = query(id__ne=self.obj.id)
+        if hasattr(self, 'obj') and self.obj and self.obj.id:
+            # Garantimos que estamos comparando Objetos do tipo ObjectId, não strings
+          
+            current_id = ObjectId(str(self.obj.id)) 
+            query = query.filter(id__ne=current_id)
             
         if query.count() > 0:
-            raise ValueError("Já existe um produto com esse nome !")
+            raise ValueError(f"Já existe um produto com esse nome !'{nome}'!")
             
         # Validações de tamanho
         if not nome or not nome.strip():

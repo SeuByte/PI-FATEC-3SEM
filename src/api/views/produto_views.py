@@ -69,19 +69,18 @@ def deletar_produto(request, id):
     except Exception as e:
         return error(message=str(e), status = 500)
     
-    
-@api_view(["PUT"])
+ 
+@api_view(["PUT"])   
+
 def editar_produto(request, id):
-    try:
-        data = request.data
-        serializer = ProdutoSerializer(data=data)
-        
-        if serializer.is_valid():
-            produto = ProdutosService.atualizar(id, serializer.validated_data)
-            return success(message="Produto editado com sucesso!.", status = 200)
-        return error(serializer.errors, status = 400)
-    except Exception as e:
-        return error(message=str(e), status = 500)
+    #Chama o service
+    resultado = ProdutosService.atualizar(id, request.data)
+    
+    if resultado["status"] == "sucesso":
+        return success(message=resultado["message"], status=200)
+    else:
+        # Se houve erro de validação ou não encontrado, o Service já manda o código certo
+        return error(message=resultado["message"], status=resultado["code"])
         
 
         

@@ -100,15 +100,6 @@ class TestProdutoSerializer:
         
         print(f"\nSUCESSO: Produto encontrado no banco: {produto_salvo.Nome}")
         
-        
-        
-        
-            
-        
-        
-        
-        
-        
             
     def test_nome_sucesso(self):
         assert self.s.validate_Nome("Monitor") == "Monitor"
@@ -174,7 +165,7 @@ class TestProdutoSerializer:
             if hasattr(self.s, 'obj'):
                 del self.s.obj
                 
-            # 2. Testa se o raise ocorre quando chamamos o save()
+            # 2. Testa se o raise ocorre quando o save é chamado()
             with pytest.raises(ValueError, match="Nenhum objeto para salvar."):
                 self.s.save()
     

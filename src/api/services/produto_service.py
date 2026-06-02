@@ -1,4 +1,5 @@
-from src.core.models import Produtos
+from src.api.models import Produtos
+from src.api.serializers.produto_serializer import ProdutoSerializer
 from decimal import Decimal
 
 
@@ -22,16 +23,31 @@ class ProdutosService:
 
     @staticmethod
     def atualizar(id, data):
-        produto = Produtos.objects.get(id=id)
-
-        for campo, valor in data.items():
-            if campo in ["Valor_venda", "Estoque", "Preco_100g"]:
-                valor = Decimal(str(valor))
-
-            setattr(produto, campo, valor)
-
+        produto = Produtos.objects(id=id).first()
+        if not produto:
+            return {"status": "erro", "message": "Produto não encontrado", "code": 404}
+        
+        # Instancia o serializer
+        serializer = ProdutoSerializer(data=data)
+        serializer.obj = produto # Injetamos o objeto para validação
+        
+        if not serializer.is_valid():
+            return {"status": "erro", "message": serializer.errors, "code": 400}
+        
+        # --- AQUI ESTÁ O PULO DO GATO ---
+        # Você precisa atualizar os campos do objeto com os dados validados
+        validated_data = serializer.validated_data # ou o dict que você usa
+        
+        produto.Nome = validated_data.get('Nome', produto.Nome)
+        produto.Estoque = validated_data.get('Estoque', produto.Estoque)
+        produto.Unidade = validated_data.get('Unidade', produto.Unidade)
+        produto.Valor_venda = validated_data.get('Valor_venda', produto.Valor_venda)
+        produto.Grupo = validated_data.get('Grupo', produto.Grupo)
+        produto.Preco_100g = validated_data.get('Preco_100g', produto.Preco_100g)
+        
         produto.save()
-        return produto
+        
+        return {"status": "sucesso", "message": "Produto editado com sucesso!"}
 
 
     @staticmethod
