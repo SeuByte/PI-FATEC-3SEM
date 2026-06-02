@@ -1,41 +1,9 @@
-import os
-import django
-import pytest
-from mongoengine import connect, disconnect
-from src.api.serializers.produto_serializer import ProdutoSerializer
+
 from decimal import Decimal
-
-# --- CONFIGURAÇÃO ANTES DE QUALQUER IMPORT ---
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.janete.settings')
-django.setup()
-
-from rest_framework.test import APIClient
 from src.api.models import Produtos
 from bson.decimal128 import Decimal128
 
-@pytest.fixture(autouse=True)
-def setup_db():
-    disconnect()
-    # Porta 27018 (Docker), ignorando a porta 27017 (Windows)
-    connect('test_db_teste', host='localhost', port=27018)
-    Produtos.objects.delete()
-    yield
-    disconnect()
 
-@pytest.fixture
-def client():
-    return APIClient()
-
-@pytest.fixture
-def produto_db():
-    return Produtos.objects.create(
-        Nome="Arroz integral",
-        Estoque=Decimal128("10.00"),
-        Unidade="KG",
-        Valor_venda=Decimal128("500.00"),
-        Grupo="Graos",
-        Preco_100g=Decimal128("12.50")
-    )
 
 class TestProdutoViews:
 

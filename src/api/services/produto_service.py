@@ -27,16 +27,13 @@ class ProdutosService:
         if not produto:
             return {"status": "erro", "message": "Produto não encontrado", "code": 404}
         
-        # Instancia o serializer
         serializer = ProdutoSerializer(data=data)
-        serializer.obj = produto # Injetamos o objeto para validação
+        serializer.obj = produto 
         
         if not serializer.is_valid():
             return {"status": "erro", "message": serializer.errors, "code": 400}
         
-        # --- AQUI ESTÁ O PULO DO GATO ---
-        # Você precisa atualizar os campos do objeto com os dados validados
-        validated_data = serializer.validated_data # ou o dict que você usa
+        validated_data = serializer.validated_data 
         
         produto.Nome = validated_data.get('Nome', produto.Nome)
         produto.Estoque = validated_data.get('Estoque', produto.Estoque)

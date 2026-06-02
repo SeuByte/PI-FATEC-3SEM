@@ -1,28 +1,9 @@
 import pytest
-import mongomock
-from mongoengine import connect, disconnect 
 from src.api.models import Produtos
 from src.api.serializers.produto_serializer import ProdutoSerializer
 from decimal import Decimal
 from bson.decimal128 import Decimal128
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_db():
-    # 1. Desconecta qualquer registro anterior para evitar conflito
-    disconnect(alias='default')
-    
-    # 2. Conecta usando o método correto exigido pela biblioteca
-    connect(
-        'TestandoProdutos', 
-        host='mongodb://localhost',  # Use um host padrão (não use mongomock://)
-        mongo_client_class=mongomock.MongoClient, 
-        alias='default'
-    )
-    
-    yield
-    
-    # 3. Limpa ao finalizar
-    disconnect(alias='default')
 
 class TestProdutoSerializer:
 
