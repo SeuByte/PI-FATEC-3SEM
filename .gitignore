@@ -29,3 +29,6 @@ media/
 
 # Logs
 *.log
+
+#Banco de dados não relacional no container do Docker
+.mongodb_data/
