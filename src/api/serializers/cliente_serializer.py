@@ -1,7 +1,7 @@
 #ClienteSerializer implementa as normas especificas para clientes.
 #Exemplo: Para CPF é necessario 11 digitos.
 from src.api.models import Clientes
-from datetime import date
+from datetime import datetime, date
 from .base_serializer import BaseSerializer
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.contrib.auth.hashers import make_password
@@ -90,32 +90,43 @@ class ClienteSerializer(BaseSerializer):
       return tel_limpo
    
    
+
+
    def validate_Data_nasc(self, value):
-         if isinstance(value, date):
-            return value
-         
+      # 1. Se já for um objeto date, retorna direto
+      if isinstance(value, date):
+         return value
+
+      # 2. Tenta converter de string para data
+      # Formatos suportados: DD/MM/AAAA, DD-MM-AAAA, AAAA-MM-DD
+      formatos_possiveis = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]
+      
+      for formato in formatos_possiveis:
          try:
-            data_str = str(value).replace('-', '/')
-            
-            dia, mes, ano = data_str.split('/')
-            
-            data_obj = date(int(ano), int(mes), int(dia))
-            
-         except (ValueError, IndexError):
-            raise ValueError("Formato de data inválido. Use o padrão DD/MM/AAAA (ex: 30/05/2026)")
+               data_obj = datetime.strptime(str(value), formato).date()
+               
+               # Validação de data futura
+               if data_obj > date.today():
+                  raise ValueError("A data de nascimento não pode ser no futuro.")
+               
+               return data_obj
+         except ValueError:
+               continue # Tenta o próximo formato
 
-         if data_obj > date.today():
-            raise ValueError("A data não pode ser futura")
+      # 3. Se nenhum formato funcionou, lança erro
+      raise ValueError("Formato de data inválido. Use DD/MM/AAAA ou AAAA-MM-DD.")
          
-         return data_obj
-      
-      
+         
    def save(self):
-      return super().save(Clientes)
+      if not hasattr(self, 'obj') or self.obj is None:
+            self.obj = Clientes(**self.validated_data)
+      else:
+            # Se for atualização, atualiza os campos
+          for attr, value in self.validated_data.items():
+               setattr(self.obj, attr, value)
+        
+      return self.obj.save()
 
-   
-   def save(self):
-      pass
    
    
       
