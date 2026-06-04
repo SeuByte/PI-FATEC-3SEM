@@ -62,7 +62,7 @@ class TestProdutoSerializer:
         assert self.s.validate_Preco_100g(100) == Decimal("100.00")
         
     def test_save_sucesso(self):
-    # Usei Decimal128 para garantir que o MongoEngine aceite o valor
+    #Decimal128 para garantir que o MongoEngine aceite o valor
         p = Produtos.objects.create(
             Estoque=Decimal128("10.09"),
             Nome="Arroz integral",

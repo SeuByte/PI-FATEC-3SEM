@@ -17,7 +17,7 @@ class BaseSerializer:
         self.errors = {}
         self.validated_data = {}
         
-        if self.data_input is None:
+        if not self.data_input :
             self.errors['non_fields_errors'] = "Nenhum dado foi fornecido para validação."
             return False
         

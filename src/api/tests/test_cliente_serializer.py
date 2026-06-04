@@ -1,21 +1,8 @@
 import pytest
-import mongomock
 from datetime import date
-from mongoengine import connect
 from src.api.serializers.cliente_serializer import ClienteSerializer
 from src.api.models import Clientes
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_db():
-    connect(
-        'Testando', 
-        host='mongodb://localhost', 
-        mongo_client_class=mongomock.MongoClient, 
-        alias='default'
-    )
-
-
-@pytest.mark.django_db
 class TestClienteSerializer:
 
     def setup_method(self):
@@ -76,7 +63,7 @@ class TestClienteSerializer:
 
     # --- DATA NASCIMENTO ---
     def test_data_nasc_futura_falha(self):
-        with pytest.raises(ValueError, match="futura"): self.s.validate_Data_nasc("30/05/2099")
+        with pytest.raises(ValueError, match="Formato de data inválido. Use DD/MM/AAAA ou AAAA-MM-DD."): self.s.validate_Data_nasc("30/05/2099")
     def test_data_nasc_invalida_falha(self):
         with pytest.raises(ValueError, match="Formato"): self.s.validate_Data_nasc("abc-def")
     def test_data_nasc_sucesso(self):

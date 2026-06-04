@@ -11,7 +11,6 @@ class ConcreteSerializer(BaseSerializer):
             raise ValueError("Erro de nome")
         return value.upper()
 
-@pytest.mark.django_db
 class TestBaseSerializer:
 
     def test_is_valid_sem_dados(self):

@@ -1,48 +1,51 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response 
-from rest_framework import status
+from rest_framework.decorators import api_view
 from src.api.serializers.cliente_serializer import ClienteSerializer
-from src.api.models import Clientes
+from src.api.services.cliente_service import ClienteService
+from src.api.utils.response import success, error
+from django.core.exceptions import ValidationError
 
-class ListarCliente(APIView):
-    def get(self, request):
-        clientes = Clientes.objects.all()
-        data = [ClienteSerializer(obj=c).to_representation() for c in clientes]
-        return Response(data)
-    
-class LoginCliente(APIView):
-    def post(self, request):
-        Email = request.data.get('Email')
-        Senha = request.data.get('Senha')
-        cliente = Clientes.objects.filter(Email=Email, Senha=Senha).first()
-        if cliente:
-           return Response({"msg": "Login feito com sucesso!"})
+@api_view(["GET"])
+def listar_clientes(request):
+    try:
+        data = ClienteService.listar_cliente()
+        return success(data)
+    except Exception as e:
+        return error(message="Erro interno no servidor", status=500)
 
-        return Response({"msg": "Conta não encontrada :("}, status=400)
+@api_view(["POST"])
+def login_cliente(request):
+    try:
+        email = request.data.get('Email')
+        senha = request.data.get('Senha')
+        
+        ClienteService.autenticar(email, senha)
+        
+        return success(message="Login efetuado com sucesso!")
 
+    except ValueError as e:
+        # Aqui  captura o "Email ou senha incorretos" enviado pelo Service
+        return error(message=str(e), status=400)
 
-class RegistroView(APIView):
-    def post(self, request):
-        serializer = ClienteSerializer(data=request.data)    
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"mensagem": "Cliente cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
-       
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-class ResetarSenha(APIView):
-    def post(self, request):
-        serializer = ResetPasswordSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        data = serializer.validated_data
-        email = data.get('email')
-        new_password = data.get('new_password')
+    except Exception as e:
+        # Aqui  captura erros técnicos inesperados (500)
+        return error(message="Erro interno no servidor.", status=500)
+
+@api_view(["POST"])
+def cadastrar_cliente(request):
+    #Chama o serializer
+    serializer = ClienteSerializer(data=request.data)
+    #Caso o serializer valide todos os dados enviados com sucesso, segue o codigo
+    if serializer.is_valid():
         try:
-            user = Clientes.objects.get(Email=email)
-            user.Senha = new_password
-            user.save()
-            return Response({"mensagem": "Senha alterada com sucesso!"}, status=status.HTTP_200_OK)
-        except Clientes.DoesNotExist:
-            return Response({"mensagem": "Usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)
+            #Chama o service para criar
+            ClienteService.criar_cliente(serializer.validated_data)
+            #Caso o construtor não dê nenhum problema, a view retorna sucesso
+            return success(message="Cliente cadastrado com sucesso!", status=201)
+        #Erros como email ou senha errados são registrados aqui
+        except ValidationError as e:
+            return error(message=str(e), status=400)
+        #Erros que fogem do escopo do serializer são registrados aqui
+        except Exception as e:
+            return error(message="Erro interno do sistema.", status=500)
+    #Qualquer campo que o usuário digitar não passar das regras de negocio, é registrado aqui
+    return error(message=serializer.errors, status=400)

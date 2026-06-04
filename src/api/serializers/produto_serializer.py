@@ -62,8 +62,7 @@ class ProdutoSerializer(BaseSerializer):
         if value == "":
             raise ValueError("O produto deve conter estoque a cima de zero !")
         try:
-            estoque = Decimal(str(value))
-            
+            estoque = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             if estoque < 0:
                 raise ValueError("O produto não pode ter estoque negativo !")
             return estoque
@@ -80,7 +79,7 @@ class ProdutoSerializer(BaseSerializer):
         if value == "" :
             raise ValueError("O valor venda é necessario.")
         try:
-            valor_venda = Decimal(str(value))
+            valor_venda = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         except (InvalidOperation, ValueError, TypeError):
             raise ValueError("O valor de venda deve ser um numero decimal válido")
         if valor_venda < 0:
@@ -93,7 +92,7 @@ class ProdutoSerializer(BaseSerializer):
             raise ValueError("O preço de 100g é necessario.")
         
         try:
-            preco_100g = Decimal(str(value))
+            preco_100g = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         except (InvalidOperation, ValueError, TypeError):
             raise ValueError("O valor deve ser um numero decimal válido")
             
