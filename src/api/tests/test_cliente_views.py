@@ -30,7 +30,6 @@ def test_cadastrar_cliente_email_duplicado(client, dados_cliente_valido):
         assert response.status_code == 400
         
         # 4. Verifica se a mensagem de erro está presente no retorno do serializer
-        # O DRF retorna um dicionário de erros
         assert 'Email' in response.data['message'] or "já existe" in str(response.data['message']).lower()
 def test_cadastrar_cliente_invalido(client):
         # Enviando payload vazio para disparar erro do serializer

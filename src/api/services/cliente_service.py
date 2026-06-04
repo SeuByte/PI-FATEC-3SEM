@@ -22,11 +22,7 @@ class ClienteService:
 
     @staticmethod
     def criar_cliente(data):
-<<<<<<< HEAD
         # Aqui o serializer já foi validado na View, então é salvo
-=======
-        # Aqui o serializer já foi validado na View, então salvamos
->>>>>>> 871f635e9a99a5a3647a49efef64b3faeffe5960
         novo_cliente = Clientes(**data)
         novo_cliente.save()
         return novo_cliente

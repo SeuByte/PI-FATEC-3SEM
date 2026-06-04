@@ -7,6 +7,7 @@ class ProdutosService:
     
     @staticmethod
     def listar():
+        
         return Produtos.objects()
     
     @staticmethod
