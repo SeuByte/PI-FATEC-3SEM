@@ -12,7 +12,11 @@ from src.api.models import Produtos, Clientes
 from bson.decimal128 import Decimal128
 from django.contrib.auth.hashers import make_password
 
+<<<<<<< HEAD
 #  Configuração do banco para apagar sempre os dados testes
+=======
+#  Configuração do banco para todos os testes
+>>>>>>> 871f635e9a99a5a3647a49efef64b3faeffe5960
 @pytest.fixture(autouse=True)
 def setup_db():
     disconnect()
@@ -41,6 +45,7 @@ def produto_db():
         Preco_100g=Decimal128("12.50")
     )
     
+<<<<<<< HEAD
 
 @pytest.fixture
 def dados_cliente_valido():
@@ -69,4 +74,6 @@ def cliente_db(dados_cliente_valido):
     return Clientes.objects.create(**dados)
 
     
+=======
+>>>>>>> 871f635e9a99a5a3647a49efef64b3faeffe5960
     
