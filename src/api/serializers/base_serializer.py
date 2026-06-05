@@ -13,6 +13,7 @@ class BaseSerializer:
         raise NotImplementedError()
     
     def is_valid(self):
+        print(f"DEBUG: Dados recebidos no serializer: {self.data_input}")
         self.errors = {}
         self.validated_data = {}
         

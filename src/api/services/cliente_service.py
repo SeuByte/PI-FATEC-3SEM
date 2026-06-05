@@ -1,4 +1,4 @@
-from core.models import Clientes
+from src.api.models import Clientes
 
 class ClientesService:
     

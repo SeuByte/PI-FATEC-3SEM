@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response 
 from rest_framework import status
 from src.api.serializers.cliente_serializer import ClienteSerializer
-from src.core.models import Clientes
+from src.api.models import Clientes
 
 class ListarCliente(APIView):
     def get(self, request):

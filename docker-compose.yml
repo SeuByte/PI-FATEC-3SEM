@@ -1,0 +1,49 @@
+services:
+  web:
+    build: .
+    container_name: django_app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - MONGO_HOST=mongodb
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - mongodb
+    networks:
+      - minha_rede
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    # ports:
+    #   - "27018:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    networks:
+      - minha_rede
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "mongodb"
+      ME_CONFIG_MONGODB_PORT: 27018
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+    depends_on:
+      mongodb:
+        condition: service_started
+    networks:
+       minha_rede:
+        aliases:
+          - mongo
+
+networks:
+  minha_rede:
+    driver: bridge

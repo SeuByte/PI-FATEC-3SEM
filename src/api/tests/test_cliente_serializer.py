@@ -1,21 +1,8 @@
 import pytest
-import mongomock
 from datetime import date
-from mongoengine import connect
 from src.api.serializers.cliente_serializer import ClienteSerializer
-from src.core.models import Clientes
+from src.api.models import Clientes
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_db():
-    connect(
-        'Testando', 
-        host='mongodb://localhost', 
-        mongo_client_class=mongomock.MongoClient, 
-        alias='default'
-    )
-
-
-@pytest.mark.django_db
 class TestClienteSerializer:
 
     def setup_method(self):
