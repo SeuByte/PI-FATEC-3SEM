@@ -1,6 +1,6 @@
 from django.urls import path
 from src.api.views.produto_views import listar_produtos, listar_produto_id, deletar_produto, editar_produto, criar_produto
-from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente
+from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida
 
 urlpatterns = [
 path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
@@ -12,5 +12,6 @@ path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
     path('cadastrar_cliente/', cadastrar_cliente, name='cadastrar_cliente'),#Funcionando
     path('listar_cliente/', listar_clientes, name='listar_clientes'),#Funcionando
     path('login_cliente/', login_cliente, name='login_cliente'),#Funcionando
-
+    path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),
+   
 ]

@@ -9,14 +9,17 @@ import pytest
 from mongoengine import connect, disconnect
 from rest_framework.test import APIClient
 from src.api.models import Produtos, Clientes
-from bson.decimal128 import Decimal128
+from bson import Decimal128, ObjectId
 from django.contrib.auth.hashers import make_password
+from types import SimpleNamespace
+from django.urls import reverse
+from src.api.utils.auth_utils import gerar_token
 
 #  Configuração do banco para apagar sempre os dados testes
 @pytest.fixture(autouse=True)
 def setup_db():
     disconnect()
-    connect('test_db_teste', host='mongodb://localhost:27017', port=27017)
+    connect('teste_db_teste', host='mongodb://localhost:27017', port=27017)
     Produtos.objects.delete()
     Clientes.objects.all().delete()
 
@@ -61,12 +64,36 @@ def dados_cliente_valido():
 
 @pytest.fixture
 def cliente_db(dados_cliente_valido):
-    # Usa o dicionário da fixture acima para salvar no banco
-  
-    
+    # 1. Faz a cópia para não sujar a fixture base
     dados = dados_cliente_valido.copy()
+    
+    # 2. OBRIGATÓRIO: Hashear a senha ANTES de instanciar o objeto
+    # Isso garante que o objeto 'cliente' já nasça com o hash
     dados['Senha'] = make_password(dados['Senha'])
-    return Clientes.objects.create(**dados)
+    
+    # 3. Instancia e salva
+    cliente = Clientes(**dados)
+    cliente.save()
+    
+    # 4. Reload é fundamental para ver o que realmente está no banco
+    cliente.reload()
+    return cliente
+@pytest.fixture
+def usuario_autenticado(cliente_db):
+    # Criamos um "objeto fake" que o Django vai aceitar
+    # O DRF só precisa que o objeto tenha is_authenticated = True
+    user_fake = SimpleNamespace(
+        pk=ObjectId(cliente_db.id),
+        email=cliente_db.Email
+        # Se precisar de mais alguma coisa (ex: username), adicione aqui
+    )
+    return user_fake
 
-    
-    
+
+#Rota de teste para o arquivo test_auth_login    
+@pytest.fixture
+def auth_setup():
+    return {
+        "url": reverse('rota-de-teste'),
+        "token": gerar_token("usuario@teste.com")
+    }

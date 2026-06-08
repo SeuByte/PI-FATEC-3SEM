@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     #My Apps
-    "rest_framework",
+    'rest_framework',
     'src.api'
     
 ]
@@ -124,5 +124,8 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+   
 }
+
+SECRET_KEY = "kR9#bL2$mP8&zX5@qW1!vN4(tY7^jH3*cC6_dF9"

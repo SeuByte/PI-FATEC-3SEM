@@ -1,8 +1,26 @@
 
 from django.urls import reverse
-
+from src.api.utils.auth_utils import gerar_token
 
     # --- SUCESSO ---
+
+def test_rota_protegida_sucesso(client, usuario_autenticado):
+    #Gera o token com o email do usuário
+    token = gerar_token(usuario_autenticado.email) 
+    
+    #Passa pela validação do token
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+    
+    # A requisição permite o usuário autenticado
+    response = client.get(reverse('rota-de-teste'))
+    
+    #Resposta 200
+    assert response.status_code == 200
+
+def test_rota_protegida_falha(client):
+    # Sem force_authenticate, a rota deve barrar
+    response = client.get('/api/rota-de-teste/')
+    assert response.status_code in [401, 403]
 
 def test_listar_clientes_sucesso(client):
         response = client.get(reverse('listar_clientes'))

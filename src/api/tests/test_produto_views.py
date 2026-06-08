@@ -106,4 +106,4 @@ def test_editar_produto_conflito_nome(client, produto_db):
     
     response = client.put(f'/api/editar_produto/{produto_db.id}/', data=payload, format='json')
     assert response.status_code == 400
-    assert "Já existe um produto com esse nome" in str
+    assert "Já existe um produto com esse nome" in str(response.data)

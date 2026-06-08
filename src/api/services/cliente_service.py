@@ -14,8 +14,15 @@ class ClienteService:
         # Busca o cliente pelo e-mail
         cliente = Clientes.objects.filter(Email=email).first()
         #Se o cliente existir e se a senha digita coincide com a do banco.
-        if cliente and check_password(senha_digitada, cliente.Senha):            
-            return cliente
+        if cliente:
+            # DEBUG: Coloque o print ANTES da verificação
+            print(f"\nDEBUG: Senha digitada: {senha_digitada}")
+            print(f"DEBUG: Senha no banco: {cliente.Senha}")
+            if cliente and check_password(senha_digitada, cliente.Senha):     
+                
+                return cliente
+            else:
+                print("DEBUG: A verificação check_password FALHOU!")
         raise ValueError("Email ou senha incorretos") 
         
        

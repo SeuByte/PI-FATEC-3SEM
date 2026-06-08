@@ -19,7 +19,9 @@ def test_cpf_sucesso():
 
 # --- NOME, ENDERECO, BAIRRO, NUMERO ---
 def test_campos_obrigatorios_falha():
+    #Chama o serializer
     s = ClienteSerializer()
+    #Valida todos os possiveis erros
     with pytest.raises(ValueError, match="obrigatório"): s.validate_Nome("   ")
     with pytest.raises(ValueError, match="obrigatório"): s.validate_Endereco("")
     with pytest.raises(ValueError, match="obrigatório"): s.validate_Bairro(None)
@@ -71,7 +73,6 @@ def test_contatos_sucesso():
 # --- DATA NASCIMENTO ---
 def test_data_nasc_futura_falha():
     s = ClienteSerializer()
-    # Mantenha o match conforme o seu Serializer atual
     with pytest.raises(ValueError, match="Formato de data inválido. Use DD/MM/AAAA ou AAAA-MM-DD."): 
         s.validate_Data_nasc("30/05/2099")
     

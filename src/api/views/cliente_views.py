@@ -1,8 +1,21 @@
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from src.api.serializers.cliente_serializer import ClienteSerializer
 from src.api.services.cliente_service import ClienteService
 from src.api.utils.response import success, error
 from django.core.exceptions import ValidationError
+from src.api.utils.auth_utils import gerar_token, token_required
+
+
+@api_view(["GET"])
+@token_required  # <--- O "porteiro" está aqui!
+def pagina_protegida(request):
+    print("--- ACESSANDO A VIEW PROTEGIDA ---")
+    return Response({"message": "Você está logado e pode ver este dado secreto!"})
+
+
+
+
 
 @api_view(["GET"])
 def listar_clientes(request):
@@ -19,8 +32,9 @@ def login_cliente(request):
         senha = request.data.get('Senha')
         
         ClienteService.autenticar(email, senha)
-        
-        return success(message="Login efetuado com sucesso!")
+       
+        token = gerar_token(email)
+        return success(message="Login efetuado com sucesso!", data={"token": token})
 
     except ValueError as e:
         # Aqui  captura o "Email ou senha incorretos" enviado pelo Service
