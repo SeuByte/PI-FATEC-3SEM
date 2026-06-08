@@ -9,7 +9,7 @@ class CadastroFuncionarioView(APIView):
         serializer = FuncionarioSerializer(data=request.data)
         
         if serializer.is_valid():
-            serializer.save
+            serializer.save()
             
             return Response({"mensagem": "Funcionario Cadastra com sucesso!"}, status=status.HTTP_201_CREATED)
         

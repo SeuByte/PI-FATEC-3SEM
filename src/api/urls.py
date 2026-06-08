@@ -17,5 +17,5 @@ urlpatterns = [
  path('resetar_senha_cliente/', ResetarSenha.as_view(), name='api_Resetar_senha_cliente'),
  path('recuperar_senha/', ListarSenhaViews.as_view()),
  path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
- path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='cadastro_funcionario')
+ path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='api_cadastro_funcionario')
 ]

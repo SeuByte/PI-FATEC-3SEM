@@ -26,18 +26,3 @@ class Produtos(me.Document):
     Valor_venda = me.Decimal128Field(required=True)
     Grupo = me.StringField(required=True)
     Preco_100g = me.Decimal128Field(required=True)
-
-
-class Funcionario(me.Document):
-    Nome_completo = me.StringField(required=True)
-    Cpf = me.StringField(required=True, unique=True)
-    Data_nascimento = me.DateTimeField()
-    Email_corporativo = me.EmailField()
-    Cargo = me.StringField()
-    Departamento = me.StringField()
-    Salario = me.DecimalField(precision=2)
-    Data_admissao = me.DateTimeField(default=lambda: datetime.now(timezone.utc))
-    Ativo = me.BooleanField(default=True)
-    Is_admin = me.BooleanField(default=False)
-    
-    
