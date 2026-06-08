@@ -63,3 +63,25 @@ def cadastrar_cliente(request):
             return error(message="Erro interno do sistema.", status=500)
     #Qualquer campo que o usuário digitar não passar das regras de negocio, é registrado aqui
     return error(message=serializer.errors, status=400)
+
+@api_view(["PUT"])
+def editar_cliente( request, cliente_id):
+    serializer = ClienteSerializer(data=request.data, partial=True)
+    if serializer.is_valid():
+        try:
+            ClienteService.editar_cliente(cliente_id, serializer.validated_data)
+            return Response({"mensagem": "Cliente atualizado com sucesso!"}, status=200)
+        except ValueError as e:
+            return Response({"erro": str(e)}, status=400)
+        except Exception as e:
+            return Response({"erro":"Erro inesperado ao editar cliente."}, status=500)
+    else:
+        return Response({"erro": serializer.errors}, status=400)
+    
+@api_view(["DELETE"])
+def deletar_cliente(request, cliente_id):
+    try:
+        ClienteService.deletar_cliente(cliente_id)
+        return Response({"mensagem": "Cliente deletado com sucesso!"}, status=200)
+    except ValueError as e:
+        return Response({"erro": str(e)}, status=400)

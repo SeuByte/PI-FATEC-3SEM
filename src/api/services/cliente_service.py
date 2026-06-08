@@ -1,7 +1,7 @@
 from src.api.models import Clientes
-from django.contrib.auth.hashers import check_password 
+from django.contrib.auth.hashers import check_password, make_password
 from src.api.serializers.cliente_serializer import ClienteSerializer
-
+from bson import ObjectId
 class ClienteService:
     @staticmethod
     def listar_cliente():
@@ -15,7 +15,6 @@ class ClienteService:
         cliente = Clientes.objects.filter(Email=email).first()
         #Se o cliente existir e se a senha digita coincide com a do banco.
         if cliente:
-            # DEBUG: Coloque o print ANTES da verificação
             print(f"\nDEBUG: Senha digitada: {senha_digitada}")
             print(f"DEBUG: Senha no banco: {cliente.Senha}")
             if cliente and check_password(senha_digitada, cliente.Senha):     
@@ -25,6 +24,8 @@ class ClienteService:
                 print("DEBUG: A verificação check_password FALHOU!")
         raise ValueError("Email ou senha incorretos") 
         
+        
+        
        
 
     @staticmethod
@@ -33,3 +34,40 @@ class ClienteService:
         novo_cliente = Clientes(**data)
         novo_cliente.save()
         return novo_cliente
+    
+    
+    
+    @staticmethod
+    def editar_cliente(cliente_id, novos_dados):
+        # 1. Busca o cliente pelo ID
+        try:
+            cliente = Clientes.objects.get(id=ObjectId(cliente_id))
+        except Clientes.DoesNotExist:
+            raise ValueError("Cliente não encontrado.")
+
+        # 2. Se a senha estiver sendo alterada, hasheie a nova senha
+        if 'Senha' in novos_dados and novos_dados['Senha']:
+            # Só hasheia se for uma senha nova (opcional: comparar com a atual)
+            novos_dados['Senha'] = make_password(novos_dados['Senha'])
+
+        # 3. Atualiza os campos do objeto com os novos dados
+        for campo, valor in novos_dados.items():
+            if hasattr(cliente, campo):
+                setattr(cliente, campo, valor)
+
+        # 4. Salva no banco
+        cliente.save()
+        return cliente
+    
+    @staticmethod
+    def deletar_cliente(cliente_id):
+        try:
+            cliente = Clientes.objects.get(id=ObjectId(cliente_id))
+            cliente.delete()
+            return True
+        except Clientes.DoesNotExist:
+            raise ValueError("Cliente não encontrado.")
+        except Exception as e:
+            raise ValueError(f"Erro ao tentar deletar: {str(e)}")
+        
+        

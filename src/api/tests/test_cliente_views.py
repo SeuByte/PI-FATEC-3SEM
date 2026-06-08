@@ -14,13 +14,10 @@ def test_rota_protegida_sucesso(client, usuario_autenticado):
     # A requisição permite o usuário autenticado
     response = client.get(reverse('rota-de-teste'))
     
-    #Resposta 200
+   
     assert response.status_code == 200
 
-def test_rota_protegida_falha(client):
-    # Sem force_authenticate, a rota deve barrar
-    response = client.get('/api/rota-de-teste/')
-    assert response.status_code in [401, 403]
+
 
 def test_listar_clientes_sucesso(client):
         response = client.get(reverse('listar_clientes'))
@@ -34,6 +31,23 @@ def test_login_cliente_sucesso(client, cliente_db):
         payload = {"Email": cliente_db.Email, "Senha": "SenhaForte123!@#"}
         response = client.post(reverse('login_cliente'), data=payload, format='json')
         assert response.status_code == 200
+
+def test_editar_cliente_sucesso(client, cliente_db):
+    url = reverse('editar-cliente', kwargs={'cliente_id': str(cliente_db.id)})
+    dados = {"Nome": "Nome Alterado"}
+    
+    response = client.put(url, dados, format='json')
+    
+    assert response.status_code == 200
+    assert response.data["mensagem"] == "Cliente atualizado com sucesso!"
+    
+    # Verifica se salvou no banco
+    cliente_db.reload()
+    assert cliente_db.Nome == "Nome Alterado"
+
+
+
+
 
     # --- FALHA ---
 
@@ -49,6 +63,8 @@ def test_cadastrar_cliente_email_duplicado(client, dados_cliente_valido):
         
         # 4. Verifica se a mensagem de erro está presente no retorno do serializer
         assert 'Email' in response.data['message'] or "já existe" in str(response.data['message']).lower()
+        
+        
 def test_cadastrar_cliente_invalido(client):
         # Enviando payload vazio para disparar erro do serializer
         response = client.post(reverse('cadastrar_cliente'), data={}, format='json')
@@ -61,3 +77,27 @@ def test_login_cliente_incorreto(client):
         assert response.status_code == 400
        
         assert "incorretos" in str(response.data.get('message', ''))
+        
+def test_rota_protegida_falha(client):
+   
+    response = client.get('/api/rota-de-teste/')
+    assert response.status_code in [401, 403]
+            
+def test_editar_cliente_invalido(client, cliente_db):
+    url = reverse('editar-cliente', kwargs={'cliente_id': str(cliente_db.id)})
+    # Exemplo: enviando um formato de e-mail inválido (se seu serializer validar isso)
+    dados = {"Email": "email-invalido"}
+    
+    response = client.put(url, dados, format='json')
+    
+    assert response.status_code == 400
+    assert "Email" in response.data["erro"]
+
+def test_editar_cliente_inexistente(client):
+    url = reverse('editar-cliente', kwargs={'cliente_id': '665e8a7f9b8c2d1a3e4f5a6b'})
+    dados = {"Nome": "Inexistente"}
+    
+    response = client.put(url, dados, format='json')
+    
+    assert response.status_code == 400
+    assert response.data["erro"] == "Cliente não encontrado."

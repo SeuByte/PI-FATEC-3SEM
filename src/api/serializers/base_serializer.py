@@ -2,11 +2,12 @@
 
 
 class BaseSerializer:
-    def __init__(self, obj=None, data=None):
+    def __init__(self, obj=None, data=None, **kwargs):
         self.obj = obj
         self.data_input = data
         self.validated_data = {}
         self.errors = {}
+        self.partial = kwargs.get('partial', False)
         
         
     def to_representation(self):
