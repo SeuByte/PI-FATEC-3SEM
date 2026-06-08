@@ -3,6 +3,8 @@ from src.api.views.produto_views import listar_produtos, listar_produto_id, dele
 from src.api.views.cliente_views import ListarCliente, RegistroView, LoginCliente, ResetarSenha
 from src.api.views.confirmar_recuperacao_views import ConfirmarRecuperacaoView
 from src.api.views.listar_senha_views import ListarSenhaViews
+from src.api.views.funcionario_views import CadastroFuncionarioView
+
 urlpatterns = [
  path('produtos/', listar_produtos),#Funcionando
  path('produtos/<str:id>/', listar_produto_id),#Funcionando
@@ -14,5 +16,6 @@ urlpatterns = [
  path('login_cliente/', LoginCliente.as_view(), name= 'api_Login_Cliente'),
  path('resetar_senha_cliente/', ResetarSenha.as_view(), name='api_Resetar_senha_cliente'),
  path('recuperar_senha/', ListarSenhaViews.as_view()),
- path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view())
+ path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
+ path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='cadastro_funcionario')
 ]
