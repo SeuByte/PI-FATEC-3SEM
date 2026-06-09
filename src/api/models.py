@@ -25,7 +25,6 @@ class Produtos(me.Document):
     Valor_venda = me.Decimal128Field(required=True)
     Grupo = me.StringField(required=True)
     Preco_100g = me.Decimal128Field(required=True)
-    
 
 class Carrinho(me.Document):
     Cliente_id = me.ObjectIdField(required=True)
