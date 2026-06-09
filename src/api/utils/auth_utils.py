@@ -23,7 +23,9 @@ def token_required(view_func):
             return Response({"error": "Token não fornecido"}, status=401)
         try:
             token = auth_header.split(" ")[1]
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            #Injeção no request para reconhecer o email do usuário
+            request.user_email = payload['email']
         except Exception:
             return Response({"error": "Token inválido ou expirado"}, status=401)
         return view_func(request, *args, **kwargs)
