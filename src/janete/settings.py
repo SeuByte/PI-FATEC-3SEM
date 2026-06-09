@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     #My Apps
     "rest_framework",
     'src.api',
-    'usuarios'
+    'src.usuarios'
     
 ]
 
