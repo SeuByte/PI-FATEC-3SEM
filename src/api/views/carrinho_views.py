@@ -4,7 +4,8 @@ from src.api.serializers.carrinho_serializer import CarrinhoSerializer
 from src.api.models import Clientes
 from src.api.utils.auth_utils import token_required
 from src.api.utils.response import success, error
-
+from rest_framework.response import Response
+from bson.errors import InvalidId
 
 @api_view(["POST"])
 @token_required
@@ -34,3 +35,41 @@ def adicionar_ao_carrinho(request):
             return error(message=str(e), status=500)
     #Caso a validação do serializer encontre algum erro.
     return error(message=serializer.errors, status=400)
+
+
+@api_view(["GET"])
+@token_required
+def listar_carrinho(request):
+    try:
+        email_cliente = request.user_email
+        cliente = Clientes.objects(Email=email_cliente).first()
+        if not cliente:
+            return Response({"error": "Cliente não encontrado"}, status=404)
+        resultado = CarrinhoService.listar_itens_carrinho(str(cliente.id))
+        return Response(resultado, status=200)
+    except Exception as e:
+        return Response({"error": f"Erro ao listar carrinho: {str(e)}"}, status=500)
+    
+
+@api_view(["DELETE"])    
+@token_required
+def remover_item_carrinho(request):
+    try:
+        email_cliente = request.user_email
+        cliente = Clientes.objects(Email=email_cliente).first()
+        
+        if not cliente:
+            return Response({"error": "Cliente não encontrado"}, status=404)
+        produto_id = request.data.get('produto_id')
+        if not produto_id:
+            return Response({'error': "O campo 'produto_id é obrigatorio no corpo da requisição"}, status=400)
+        carrinho_atualizado = CarrinhoService.deletar_itens_carrinho(str(cliente.id), produto_id)
+        return Response({"message": "Item removido com sucesso!"}, status=200)
+    except ValueError as e:
+        # Captura o "Produto não encontrado no carrinho" ou "Carrinho não encontrado" do Service
+        return Response({"error": str(e)}, status=404)
+    
+    except InvalidId:
+        return Response({"error": "O ID do produto enviado é invalido."}, status=400)
+    except Exception as e:
+        return Response({"error": f"Erro interno ao remover item: {str(e)}"}, status=500)
