@@ -1,7 +1,7 @@
 from decimal import Decimal, ROUND_HALF_UP
 
-# 1. Simulando o dado cru: O MongoDB te devolve um float.
-# Imagine que o preço real era 10.33, mas na memória virou essa dízima.
+# 1. Simulando o dado cru: O MongoDB devolve um float gigante.
+# Preço real era 10.33, mas na memória virou essa dízima.
 valor_venda_banco = 10.33333333333333 
 quantidade_comprada = 3
 

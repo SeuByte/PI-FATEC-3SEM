@@ -29,7 +29,7 @@ class Produtos(me.Document):
 class Carrinho(me.Document):
     Cliente_id = me.ObjectIdField(required=True)
     Itens = me.ListField(me.DictField())
-    Valor_frete = me.IntField( null =True, default=None)
+    Valor_frete = me.Decimal128Field(null=True, default=0.0)
     Tipo_frete = me.StringField()
     
     
