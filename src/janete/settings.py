@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "rest_framework",
     'src.api',
     'src.usuarios'
+    'rest_framework',
+    'src.api'
     
 ]
 
@@ -126,7 +128,8 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+   
 }
 
 EMAIL_BACKEND = (
@@ -147,3 +150,4 @@ EMAIL_HOST_USER = config(
 EMAIL_HOST_PASSWORD = config(
     'EMAIL_HOST_PASSWORD'
 )
+SECRET_KEY = "kR9#bL2$mP8&zX5@qW1!vN4(tY7^jH3*cC6_dF9"

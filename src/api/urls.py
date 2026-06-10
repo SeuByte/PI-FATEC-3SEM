@@ -8,12 +8,17 @@ from src.api.views.funcionario_views import CadastroFuncionarioView
 urlpatterns = [
     # Produtos
  path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
+from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida, editar_cliente, deletar_cliente
+
+urlpatterns = [
+path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
     path('produtos/<str:id>/', listar_produto_id, name='listar_produto_id'),#Funcionando
     path('deletar_produto/<str:id>/', deletar_produto, name='deletar_produto'),#Funcionando
     path('editar_produto/<str:id>/', editar_produto, name='editar_produto'),#Funcionando
     path('criar_produto/', criar_produto, name='criar_produto'),#Funcionando
 
     # Clientes
+    
     path('cadastrar_cliente/', cadastrar_cliente, name='cadastrar_cliente'),#Funcionando
     path('editar_cliente/<str:cliente_id>/', editar_cliente, name='editar-cliente'),#Funcionando
     path('deletar_cliente/<str:cliente_id>/', deletar_cliente, name='deletar_cliente'),
@@ -26,4 +31,5 @@ urlpatterns = [
     path('recuperar_senha/', ListarSenhaViews.as_view()),
     path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
     path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='api_cadastro_funcionario')
+   
 ]

@@ -2,11 +2,12 @@
 
 
 class BaseSerializer:
-    def __init__(self, obj=None, data=None):
+    def __init__(self, obj=None, data=None, **kwargs):
         self.obj = obj
         self.data_input = data
         self.validated_data = {}
         self.errors = {}
+        self.partial = kwargs.get('partial', False)
         
         
     def to_representation(self):
@@ -17,7 +18,7 @@ class BaseSerializer:
         self.errors = {}
         self.validated_data = {}
         
-        if self.data_input is None:
+        if not self.data_input :
             self.errors['non_fields_errors'] = "Nenhum dado foi fornecido para validação."
             return False
         
