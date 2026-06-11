@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from usuarios.model import FuncionarioModel
+from src.usuarios.models import FuncionarioModel
 from src.api.serializers.funcionario_serializer import FuncionarioSerializer
 
 class CadastroFuncionarioView(APIView):
@@ -14,3 +14,30 @@ class CadastroFuncionarioView(APIView):
             return Response({"mensagem": "Funcionario Cadastra com sucesso!"}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        from usuarios.models import FuncionarioModel
+
+class ListarFuncionariosView(APIView):
+
+    def get(self, request):
+
+        funcionarios = (FuncionarioModel.objects.all())
+
+        serializer = (FuncionarioSerializer(funcionarios,many=True))
+
+        return Response(serializer.data)
+
+        class BuscarFuncionarioView(APIView):
+
+    def get(self, request, id_funcionario):
+        try:
+
+            funcionario = (FuncionarioModel.objects.get(id_funcionario=id_funcionario))
+
+            serializer = (FuncionarioSerializer(funcionario))
+
+            return Response(serializer.data)
+
+        except FuncionarioModel.DoesNotExist:
+
+            return Response({"erro": "Funcionário não encontrado"}, status=404)

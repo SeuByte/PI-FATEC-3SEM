@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from usuarios.models import (
+from src.usuarios.models import (
     RecuperarSenhaModel
 )
 
