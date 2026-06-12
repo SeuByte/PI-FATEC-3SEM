@@ -6,6 +6,7 @@ from src.api.utils.auth_utils import token_required
 from src.api.utils.response import success, error
 from rest_framework.response import Response
 from bson.errors import InvalidId
+import traceback
 
 @api_view(["POST"])
 @token_required
@@ -23,7 +24,7 @@ def adicionar_ao_carrinho(request):
                 )
             return success(message="Produto adicionado ao carrinho com sucesso !", status=201)
         except Clientes.DoesNotExist:
-            return error(message="Cliente não encontrado.", stauts=404)
+            return error(message="Cliente não encontrado.", status=404)
         except ValueError as e:
             #Captura erros de logica(ex: produto não encontrado)
             return error(message=str(e), status=400)
@@ -73,3 +74,41 @@ def remover_item_carrinho(request):
         return Response({"error": "O ID do produto enviado é invalido."}, status=400)
     except Exception as e:
         return Response({"error": f"Erro interno ao remover item: {str(e)}"}, status=500)
+    
+    
+@api_view(["POST"])
+@token_required
+def finalizar_carrinho(request):
+    try:
+        email_cliente = request.user_email
+        cliente = Clientes.objects(Email=email_cliente).first()
+        
+        if not cliente:
+            return error(message="Cliente não encontrado.", status=404)
+        
+        forma_pagamento = request.data.get("forma_pagamento")
+        if not forma_pagamento:
+            return error(message="O campo 'forma_pagamento' é obrigatório", status=400)
+        
+        serializer = CarrinhoSerializer(data=request.data, context={'cliente_id': cliente.id})
+        
+        if serializer.is_valid():
+            
+        
+            carrinho_validado = serializer.context.get('carrinho_validado')
+            
+            novo_pedido = CarrinhoService.finalizar_carrinho(
+                cliente_id = cliente.id,
+                forma_pagamento = forma_pagamento,
+                carrinho = carrinho_validado
+            )
+            return success(message="Pedido finalizado com sucesso!", data={"pedido_id": str(novo_pedido.id), "status": novo_pedido.Status.value}, 
+                status=201)
+        else:
+            return error(message=serializer.errors, status=400)
+    except ValueError as e:
+        return error(message=str(e), status=400)
+    except Exception as e:
+        print(f"--- ERRO DETALHADO NO FECHAMENTO: {str(e)} ---")
+        traceback.print_exc()
+        return error(message="Erro interno ao finalizar o carrinho", status=500)

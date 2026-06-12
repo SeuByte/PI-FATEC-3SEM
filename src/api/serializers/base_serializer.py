@@ -2,9 +2,10 @@
 
 
 class BaseSerializer:
-    def __init__(self, obj=None, data=None, **kwargs):
+    def __init__(self, obj=None, data=None, context=None, **kwargs):
         self.obj = obj
         self.data_input = data
+        self.context = context or {}
         self.validated_data = {}
         self.errors = {}
         self.partial = kwargs.get('partial', False)
