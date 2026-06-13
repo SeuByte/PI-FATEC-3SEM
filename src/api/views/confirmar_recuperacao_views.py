@@ -48,13 +48,7 @@ class ConfirmarRecuperacaoView(APIView):
 
         if not registro:
 
-            return Response(
-                {
-                    "erro":
-                    "Token inválido"
-                },
-                status=400
-            )
+            return Response({"erro": "Token inválido"}, status=400)
 
         cliente = (
             Clientes.objects(
@@ -64,13 +58,7 @@ class ConfirmarRecuperacaoView(APIView):
 
         if not cliente:
 
-            return Response(
-                {
-                    "erro":
-                    "Cliente não encontrado"
-                },
-                status=404
-            )
+            return Response({"erro": "Cliente não encontrado"}, status=404)
 
         cliente.Senha = nova_senha
 
@@ -80,9 +68,4 @@ class ConfirmarRecuperacaoView(APIView):
 
         registro.save()
 
-        return Response(
-            {
-                "mensagem":
-                "Senha alterada com sucesso"
-            }
-        )
+        return Response({"mensagem": "Senha alterada com sucesso"})
