@@ -1,7 +1,7 @@
 from django.urls import path
 from src.api.views.produto_views import listar_produtos, listar_produto_id, deletar_produto, editar_produto, criar_produto
-from src.api.views.confirmar_recuperacao_views import ConfirmarRecuperacaoView
-from src.api.views.listar_senha_views import ListarSenhaViews
+from src.api.views.confirmar_recuperacao_views import confirmar_recuperacao
+from src.api.views.listar_senha_views import recuperar_senha
 from src.api.views.funcionario_views import cadastrar_funcionario, listar_funcionarios, buscar_funcionario, atualizar_funcionario
 from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida, editar_cliente, deletar_cliente
 
