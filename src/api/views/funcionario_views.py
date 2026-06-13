@@ -1,64 +1,148 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from src.usuarios.models import FuncionarioModel
+from rest_framework.decorators import api_view
 from src.api.serializers.funcionario_serializer import FuncionarioSerializer
+from src.api.services.funcionario_service import FuncionarioService
+from src.api.utils.response import success, error
 
 
-class CadastroFuncionarioView(APIView):
-    def post(self, request):
-        serializer = FuncionarioSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            serializer.save()
-            
-            return Response({"mensagem": "Funcionario Cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ListarFuncionariosView(APIView):
+@api_view(["POST"])
+def cadastrar_funcionario(request):
 
-    def get(self, request):
+    # Valida os dados recebidos
+    serializer = FuncionarioSerializer(
+        data=request.data
+    )
 
-        funcionarios = (FuncionarioModel.objects.all())
+    # Se os dados forem válidos
+    if serializer.is_valid():
 
-        serializer = (FuncionarioSerializer(funcionarios,many=True))
-
-        return Response(serializer.data)
-
-        
-class BuscarFuncionarioView(APIView):
-
-    def get(self, request, id_funcionario):
-        
         try:
 
-            funcionario = (FuncionarioModel.objects.get(id_funcionario=id_funcionario))
+            # Chama a service para criar o funcionário
+            FuncionarioService.criar_funcionario(
+                serializer.validated_data
+            )
 
-            serializer = (FuncionarioSerializer(funcionario))
+            return success(
+                message="Funcionário cadastrado com sucesso!",
+                status=201
+            )
 
-            return Response(serializer.data)
+        # Captura erros inesperados
+        except Exception:
 
-        except FuncionarioModel.DoesNotExist:
+            return error(
+                message="Erro interno do sistema.",
+                status=500
+            )
 
-            return Response({"erro": "Funcionário não encontrado"}, status=404)
+    # Retorna erros do serializer
+    return error(
+        message=serializer.errors,
+        status=400
+    )
 
-class AtualizarFuncionarioView(APIView):
-    
-    def put (self, request, id_funcionario):
-        
+
+@api_view(["GET"])
+def listar_funcionarios(request):
+
+    try:
+
+        # Busca todos os funcionários
+        data = (
+            FuncionarioService.listar_funcionarios()
+        )
+
+        return success(data=data)
+
+    # Captura erros inesperados
+    except Exception:
+
+        return error(
+            message="Erro interno no servidor",
+            status=500
+        )
+
+
+@api_view(["GET"])
+def buscar_funcionario(
+    request,
+    id_funcionario
+):
+
+    try:
+
+        # Busca funcionário pelo ID
+        data = (
+            FuncionarioService.buscar_funcionario(
+                id_funcionario
+            )
+        )
+
+        return success(data=data)
+
+    # Funcionário não encontrado
+    except ValueError as e:
+
+        return error(
+            message=str(e),
+            status=404
+        )
+
+    # Captura erros inesperados
+    except Exception:
+
+        return error(
+            message="Erro interno no servidor",
+            status=500
+        )
+
+
+@api_view(["PUT"])
+def atualizar_funcionario(
+    request,
+    id_funcionario
+):
+
+    # Permite atualizar apenas os campos enviados
+    serializer = FuncionarioSerializer(
+        data=request.data,
+        partial=True
+    )
+
+    # Valida os dados recebidos
+    if serializer.is_valid():
+
         try:
-            funcionario = FuncionarioModel.objects.get(id_funcionario=id_funcionario)
-            serializer = FuncionarioSerializer(funcionario, data=request.data, partial=True) 
-            
-            if serializer.is_valid():
-                return Response({"mensagem": "Funcionario Atualizado com Sucesso!"})
-            
-            
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                
-        except FuncionarioModel.DoesNotExist:
-            return Response({"mensagem": "Funcionario Não Encontrado"}, status=400)
-        
-        except Exception as e:
-            return Response({"erro": {e}}, status=500)
+
+            # Chama a service para atualizar o funcionário
+            FuncionarioService.atualizar_funcionario(
+                id_funcionario,
+                serializer.validated_data
+            )
+
+            return success(
+                message="Funcionário atualizado com sucesso!"
+            )
+
+        # Funcionário não encontrado
+        except ValueError as e:
+
+            return error(
+                message=str(e),
+                status=404
+            )
+
+        # Captura erros inesperados
+        except Exception:
+
+            return error(
+                message="Erro interno no servidor",
+                status=500
+            )
+
+    # Retorna erros do serializer
+    return error(
+        message=serializer.errors,
+        status=400
+    )

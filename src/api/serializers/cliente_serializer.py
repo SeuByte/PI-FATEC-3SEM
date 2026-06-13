@@ -155,11 +155,3 @@ class ClienteSerializer(BaseSerializer):
                setattr(self.obj, attr, value)
         
       return self.obj.save()
-
-   
-   
-      
-      
-    
-    
-   

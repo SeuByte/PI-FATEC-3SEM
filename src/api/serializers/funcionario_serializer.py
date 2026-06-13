@@ -6,5 +6,5 @@ class FuncionarioSerializer (serializers.ModelSerializer):
     class Meta:
         
         model = FuncionarioModel
-        fields = ["id_funcionario", "nome_completo", "email", "telefone", "senha", "cargo"]
+        fields = ["id_funcionario", "nome_completo", "email", "telefone", "cargo"]
         
