@@ -4,6 +4,7 @@ from rest_framework import status
 from src.usuarios.models import FuncionarioModel
 from src.api.serializers.funcionario_serializer import FuncionarioSerializer
 
+
 class CadastroFuncionarioView(APIView):
     def post(self, request):
         serializer = FuncionarioSerializer(data=request.data)
@@ -15,8 +16,6 @@ class CadastroFuncionarioView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        from usuarios.models import FuncionarioModel
-
 class ListarFuncionariosView(APIView):
 
     def get(self, request):
@@ -27,9 +26,11 @@ class ListarFuncionariosView(APIView):
 
         return Response(serializer.data)
 
-        class BuscarFuncionarioView(APIView):
+        
+class BuscarFuncionarioView(APIView):
 
     def get(self, request, id_funcionario):
+        
         try:
 
             funcionario = (FuncionarioModel.objects.get(id_funcionario=id_funcionario))
@@ -41,3 +42,23 @@ class ListarFuncionariosView(APIView):
         except FuncionarioModel.DoesNotExist:
 
             return Response({"erro": "Funcionário não encontrado"}, status=404)
+
+class AtualizarFuncionarioView(APIView):
+    
+    def put (self, request, id_funcionario):
+        
+        try:
+            funcionario = FuncionarioModel.objects.get(id_funcionario=id_funcionario)
+            serializer = FuncionarioSerializer(funcionario, data=request.data, partial=True) 
+            
+            if serializer.is_valid():
+                return Response({"mensagem": "Funcionario Atualizado com Sucesso!"})
+            
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+        except FuncionarioModel.DoesNotExist:
+            return Response({"mensagem": "Funcionario Não Encontrado"}, status=400)
+        
+        except Exception as e:
+            return Response({"erro": {e}}, status=500)

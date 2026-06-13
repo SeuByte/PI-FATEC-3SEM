@@ -2,7 +2,7 @@ from django.urls import path
 from src.api.views.produto_views import listar_produtos, listar_produto_id, deletar_produto, editar_produto, criar_produto
 from src.api.views.confirmar_recuperacao_views import ConfirmarRecuperacaoView
 from src.api.views.listar_senha_views import ListarSenhaViews
-from src.api.views.funcionario_views import CadastroFuncionarioView, ListarFuncionariosView, BuscarFuncionarioView
+from src.api.views.funcionario_views import CadastroFuncionarioView, ListarFuncionariosView, BuscarFuncionarioView, AtualizarFuncionarioView
 from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida, editar_cliente, deletar_cliente
 
 urlpatterns = [
@@ -25,7 +25,8 @@ urlpatterns = [
     #Funcionarios e Recuperação de Senha
     path('recuperar_senha/', ListarSenhaViews.as_view()),
     path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
-    path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='cadastro_funcionario')
-    path('funcionarios/', ListarFuncionariosView.as_view(), name='listar_funcionarios')
-    path('funcionarios/<int:id_funcionario>/', BuscarFuncionarioView.as_view(), name='buscar_funcionario')
+    path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='cadastro_funcionario'),
+    path('funcionarios/', ListarFuncionariosView.as_view(), name='listar_funcionarios'),
+    path('funcionarios/<int:id_funcionario>/', BuscarFuncionarioView.as_view(), name='buscar_funcionario'),
+    path('funcionarios/<int:id_funcionario>/)', AtualizarFuncionarioView.as_view())
 ]
