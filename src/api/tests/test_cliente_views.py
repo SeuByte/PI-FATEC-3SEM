@@ -1,6 +1,7 @@
 
 from django.urls import reverse
 from src.api.utils.auth_utils import gerar_token
+from src.api.models import Clientes
 
     # --- SUCESSO ---
 
@@ -85,7 +86,7 @@ def test_rota_protegida_falha(client):
             
 def test_editar_cliente_invalido(client, cliente_db):
     url = reverse('editar-cliente', kwargs={'cliente_id': str(cliente_db.id)})
-    # Exemplo: enviando um formato de e-mail inválido (se seu serializer validar isso)
+    # Exemplo: enviando um formato de e-mail inválido ( serializer valida isso)
     dados = {"Email": "email-invalido"}
     
     response = client.put(url, dados, format='json')
@@ -99,5 +100,32 @@ def test_editar_cliente_inexistente(client):
     
     response = client.put(url, dados, format='json')
     
+    assert response.status_code == 400
+    assert response.data["erro"] == "Cliente não encontrado."
+
+def test_view_deletar_cliente_sucesso(client, cliente_db):
+    # Monta a URL com o ID do cliente existente
+    url = reverse('deletar_cliente', kwargs={'cliente_id': str(cliente_db.id)})
+    
+    # Executa a requisição DELETE
+    response = client.delete(url)
+    
+    # Validações da resposta da View
+    assert response.status_code == 200
+    assert response.data["mensagem"] == "Cliente deletado com sucesso!"
+    
+    # Garante que o cliente foi de fato removido do banco
+    assert Clientes.objects.filter(id=cliente_db.id).count() == 0
+
+
+def test_view_deletar_cliente_inexistente(client):
+    # ID válido para o Mongo, mas que não existe na base
+    id_inexistente = "665e8a7f9b8c2d1a3e4f5a6b"
+    url = reverse('deletar_cliente', kwargs={'cliente_id': id_inexistente})
+    
+    # Executa a requisição DELETE
+    response = client.delete(url)
+    
+    # Valida se a View capturou o ValueError da Service e retornou 400
     assert response.status_code == 400
     assert response.data["erro"] == "Cliente não encontrado."
