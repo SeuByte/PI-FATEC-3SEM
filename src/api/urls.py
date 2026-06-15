@@ -11,6 +11,8 @@ from src.api.views.funcionario_views import CadastroFuncionarioView
 
 urlpatterns = [
     
+    # Produtos
+    
     path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
     path('produtos/<str:id>/', listar_produto_id, name='listar_produto_id'),#Funcionando
     path('deletar_produto/<str:id>/', deletar_produto, name='deletar_produto'),#Funcionando
@@ -25,17 +27,18 @@ urlpatterns = [
     path('listar_cliente/', listar_clientes, name='listar_clientes'),#Funcionando
     path('login_cliente/', login_cliente, name='login_cliente'),#Funcionando
     path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),#Pagina que apenas é possivel acessar após ter efeutado o login cliente(pagina de teste)
-    path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),
+
 
     #Funcionarios e Recuperação de Senha
-    # path('resetar_senha_cliente/', ResetarSenha.as_view(), name='api_Resetar_senha_cliente'),
+
     path('recuperar_senha/', ListarSenhaViews.as_view()),
     path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
     path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='api_cadastro_funcionario'),
    
-   path('adicionar_carrinho/', adicionar_ao_carrinho, name='adicionar_carrinho'),#Funcionando
-   path('editar_carrinho/', atualizar_quantidade_view, name='editar_carrinho'),#Funcionando
-   path('listar_carrinho/', listar_carrinho, name='adicionar_carrinho'),#Funcionando
-   path('remover_item_carrinho/', remover_item_carrinho, name='remover_item_carrinho' ),#Funcionando
-   path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho')#Funcionando
+   # Carrinho
+    path('adicionar_carrinho/', adicionar_ao_carrinho, name='adicionar_carrinho'),#Funcionando
+    path('editar_carrinho/', atualizar_quantidade_view, name='editar_carrinho'),#Funcionando
+    path('listar_carrinho/', listar_carrinho, name='adicionar_carrinho'),#Funcionando
+    path('remover_item_carrinho/', remover_item_carrinho, name='remover_item_carrinho' ),#Funcionando
+    path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho')#Funcionando
 ]

@@ -19,7 +19,7 @@ class Clientes(me.Document):
     Celular = me.StringField()
     Telefone = me.StringField(required=True)
     Data_nasc = me.DateField(required=True)
-    CPF = me.StringField(required=True)
+    CPF = me.StringField(required=True, unique=True)
     CEP = me.StringField(required=True)
     Endereco = me.StringField(required=True)
     Bairro = me.StringField(required=True)
