@@ -129,3 +129,44 @@ class TestFuncionarioViews:
         )
 
         assert response.status_code == 404
+        
+        # Verifica se um funcionário pode ser deletado
+def test_deletar_funcionario_sucesso(
+    client,
+    funcionario_db
+):
+
+    response = client.delete(
+        reverse(
+            "deletar_funcionario",
+            kwargs={
+                "id_funcionario":
+                funcionario_db.id_funcionario
+            }
+        )
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        response.data["message"]
+        ==
+        "Funcionário deletado com sucesso!"
+    )
+
+
+# Verifica se retorna erro ao deletar funcionário inexistente
+def test_deletar_funcionario_inexistente(
+    client
+):
+
+    response = client.delete(
+        reverse(
+            "deletar_funcionario",
+            kwargs={
+                "id_funcionario": 999
+            }
+        )
+    )
+
+    assert response.status_code == 500

@@ -96,3 +96,31 @@ def test_atualizar_funcionario_sucesso():
     funcionario.refresh_from_db()
 
     assert funcionario.cargo == "Gerente"
+    
+    # Verifica se um funcionário pode ser deletado
+@pytest.mark.django_db
+def test_deletar_funcionario_sucesso(funcionario_db):
+
+    FuncionarioService.deletar_funcionario(
+        funcionario_db.id_funcionario
+    )
+
+    assert (
+        FuncionarioModel.objects.filter(
+            id_funcionario=funcionario_db.id_funcionario
+        ).exists()
+        is False
+    )
+
+
+# Verifica se retorna erro ao tentar deletar funcionário inexistente
+@pytest.mark.django_db
+def test_deletar_funcionario_inexistente():
+
+    with pytest.raises(ValueError):
+
+        FuncionarioService.deletar_funcionario(
+            999
+        )
+        
+        
