@@ -3,6 +3,7 @@ import pytest
 from src.usuarios.models import FuncionarioModel
 from src.api.serializers.funcionario_serializer import FuncionarioSerializer
 
+# Sucesso
 
 # Testes do serializer de Funcionário
 @pytest.mark.django_db

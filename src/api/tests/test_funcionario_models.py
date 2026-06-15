@@ -1,7 +1,7 @@
 import pytest
+from src.usuarios.models import FuncionarioModel, RecuperarSenhaModel
 
-from src.usuarios.models import (FuncionarioModel, RecuperarSenhaModel)
-
+# Sucesso
 
 @pytest.mark.django_db
 class TestFuncionarioModels:

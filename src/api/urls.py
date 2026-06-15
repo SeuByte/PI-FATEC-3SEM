@@ -24,7 +24,7 @@ urlpatterns = [
 
     #Funcionarios e Recuperação de Senha
     path('recuperar_senha/', recuperar_senha, name='recuperar_senha'),
-    path('confirmar-recuperacao/', confirmar_recuperacao, name='confirmar_recuperacao'),
+    path('confirmar_recuperacao/', confirmar_recuperacao, name='confirmar_recuperacao'),
     path('cadastro_funcionario/', cadastrar_funcionario, name='cadastro_funcionario'),
     path('funcionarios/', listar_funcionarios, name='listar_funcionarios'),
     path('funcionarios/<int:id_funcionario>/', buscar_funcionario, name='buscar_funcionario'),

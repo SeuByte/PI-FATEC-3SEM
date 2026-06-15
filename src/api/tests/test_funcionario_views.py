@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-
 from src.usuarios.models import FuncionarioModel
 
 

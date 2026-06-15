@@ -1,34 +1,38 @@
 from rest_framework.decorators import api_view
 
-from src.api.serializers.confirmar_recuperacao_serializer import ConfirmarRecuperacaoSerializer
-from src.api.services.recuperacao_senha_service import RecuperarSenhaService
-from src.api.utils.response import success, error
+from src.api.serializers.confirmar_recuperacao_serializer import (
+    ConfirmarRecuperacaoSerializer
+)
 
+from src.api.services.recuperacao_senha_service import (
+    RecuperarSenhaService
+)
+
+from src.api.utils.response import (
+    success,
+    error
+)
 
 
 @api_view(["POST"])
 def confirmar_recuperacao(request):
 
-    serializer = (
-        ConfirmarRecuperacaoSerializer(
-            data=request.data
-        )
+    serializer = ConfirmarRecuperacaoSerializer(
+        data=request.data
     )
 
     if serializer.is_valid():
 
         try:
 
+            # Recupera os dados validados
+            dados = serializer.validated_data
+
+            # Chama a service corretamente
             RecuperarSenhaService.confirmar_recuperacao(
-                serializer.validated_data[
-                    "email"
-                ],
-                serializer.validated_data[
-                    "token"
-                ],
-                serializer.validated_data[
-                    "nova_senha"
-                ]
+                email=dados["email"],
+                token=dados["token"],
+                nova_senha=dados["nova_senha"]
             )
 
             return success(

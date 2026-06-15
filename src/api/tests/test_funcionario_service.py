@@ -1,13 +1,8 @@
 import pytest
+from src.api.services.funcionario_service import FuncionarioService
+from src.usuarios.models import FuncionarioModel
 
-from src.api.services.funcionario_service import (
-    FuncionarioService
-)
-
-from src.usuarios.models import (
-    FuncionarioModel
-)
-
+# Sucesso
 
 @pytest.mark.django_db
 def test_criar_funcionario_sucesso():
@@ -112,6 +107,7 @@ def test_deletar_funcionario_sucesso(funcionario_db):
         is False
     )
 
+# Falhas
 
 # Verifica se retorna erro ao tentar deletar funcionário inexistente
 @pytest.mark.django_db
