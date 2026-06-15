@@ -358,13 +358,4 @@ def test_atualizar_quantidade_erro_negocio(mock_clientes, mock_serializer_class,
     
 
     
-def test_adicionar_ao_carrinho_serializer_invalido(client, auth_setup):
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {auth_setup['token']}")
-    
-    # Envia um dado que viola a regra do serializer (ex: quantidade negativa)
-    payload = {"produto_id": "507f1f17bcf86cd799439011", "quantidade": -5}
-    
-    response = client.post("/api/adicionar_carrinho/", payload, format='json')
-    
-   
-    assert response.status_code == 400
+

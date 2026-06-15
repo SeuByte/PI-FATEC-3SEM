@@ -35,7 +35,6 @@ class Produtos(me.Document):
     Unidade = me.StringField(required=True)
     Valor_venda = me.Decimal128Field(required=True)
     Grupo = me.StringField(required=True)
-<<<<<<< HEAD
     Preco_100g = me.Decimal128Field(required=True)
 
 
@@ -65,6 +64,3 @@ class Carrinho(me.Document):
     
     
     
-=======
-    Preco_100g = me.Decimal128Field(required=True)
->>>>>>> main

@@ -8,6 +8,7 @@ from src.api.views.funcionario_views import CadastroFuncionarioView
 
 
 
+
 urlpatterns = [
     
     path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
@@ -27,10 +28,10 @@ urlpatterns = [
     path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),
 
     #Funcionarios e Recuperação de Senha
-    path('resetar_senha_cliente/', ResetarSenha.as_view(), name='api_Resetar_senha_cliente'),
+    # path('resetar_senha_cliente/', ResetarSenha.as_view(), name='api_Resetar_senha_cliente'),
     path('recuperar_senha/', ListarSenhaViews.as_view()),
     path('confirmar-recuperacao/', ConfirmarRecuperacaoView.as_view()),
-    path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='api_cadastro_funcionario')
+    path('cadastro_funcionario/', CadastroFuncionarioView.as_view(), name='api_cadastro_funcionario'),
    
    path('adicionar_carrinho/', adicionar_ao_carrinho, name='adicionar_carrinho'),#Funcionando
    path('editar_carrinho/', atualizar_quantidade_view, name='editar_carrinho'),#Funcionando

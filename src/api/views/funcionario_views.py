@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from usuarios.model import FuncionarioModel
+from src.usuarios.models import FuncionarioModel
 from src.api.serializers.funcionario_serializer import FuncionarioSerializer
 
 class CadastroFuncionarioView(APIView):
