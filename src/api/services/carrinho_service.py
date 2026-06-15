@@ -66,7 +66,7 @@ class CarrinhoService:
                 "valor_total": "0.00" 
             }
             
-        # 1. Fazemos a soma matemática exata dos totais
+        # 1. Soma matemática exata dos totais
         valor_total = sum(Decimal(str(item.Subtotal)) for item in carrinho.Itens)
         valor_total_formatado = Decimal(str(valor_total)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         
@@ -89,16 +89,45 @@ class CarrinhoService:
             "valor_total": str(valor_total_formatado) 
         }
         
+        
+    @staticmethod
+    def atualizar_quantidade(cliente_id, produto_id, nova_quantidade):
+        carrinho = Carrinho.objects(Cliente_id=cliente_id).first()
+        
+        if not carrinho:
+            raise ValueError("Carrinho não encontrado.")
+            
+        item = next((i for i in carrinho.Itens if str(i.Produto_id) == str(produto_id)), None)
+        if not item:
+            raise ValueError("Item não encontrado no carrinho.")
+
+        if nova_quantidade <= 0:
+            return CarrinhoService.deletar_itens_carrinho(cliente_id, produto_id)
+
+        # Atualiza a quantidade e o subtotal
+        item.Quantidade = nova_quantidade
+        _, item.Subtotal = CarrinhoService.calcular_financeiro(item.Preco_unitario, nova_quantidade)
+        
+        carrinho.save()
+        return carrinho    
+        
+        
     @staticmethod
     def deletar_itens_carrinho(cliente_id, produto_id):
+        # Não precisamos verificar se o carrinho existe aqui, pois assumimos 
+        # que o decorador de autenticação ou a View já garantiram o cliente_id.
         carrinho = Carrinho.objects(Cliente_id = cliente_id).first()
+        # Converte o ID recebido na rota para o formato nativo do MongoDB
         obj_produto_id = ObjectId(produto_id)
         
-        # Correção aqui: acessando via propriedade do objeto .Produto_id
+        
+        # Busca o item na memória. Usamos next() para parar a busca 
+        # assim que encontrar o primeiro match, otimizando a iteração.
         item_existente = next((item for item in carrinho.Itens if item.Produto_id == obj_produto_id), None)
         if not item_existente:
             raise ValueError("Produto não encontrado no carrinho.")
         
+        # O remove() atua direto na lista em memória (EmbeddedDocumentList)
         carrinho.Itens.remove(item_existente)
         carrinho.save()
         return carrinho
@@ -106,6 +135,9 @@ class CarrinhoService:
     @staticmethod
     # Transforma o carrinho atual em um pedido e limpa o carrinho do cliente.
     def finalizar_carrinho(cliente_id, forma_pagamento, carrinho):
+        
+        if not carrinho or not hasattr(carrinho, 'Itens') or len(carrinho.Itens) == 0:
+            raise ValueError("Carrinho vazio")
         
         carrinho = Carrinho.objects(Cliente_id=cliente_id).first()
         

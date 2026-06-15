@@ -5,9 +5,11 @@ from src.api.models import Carrinho
 
 
 class CarrinhoSerializer(BaseSerializer):
-    
+    print("Começo das validacoes")
     #Visando que alguem mal intencioado tente enviar uma requisição via URL
     def validate_produto_id(self, value):
+       if not value:
+           raise ValueError("O campo 'produto_id' é obrigatório e não pode ser nulo.")
        try:
            return str(ObjectId(value))
        except InvalidId:
@@ -21,24 +23,29 @@ class CarrinhoSerializer(BaseSerializer):
             raise ValueError("A quantidade deve ser maior que zero.")
         return qtd
     
-    #Valida o carrinho por completo, pois o carrinho é um item inteiro e não apenas um campo especifico.
+    
     def validate_forma_pagamento(self, value):
+        
         if not value:
             raise ValueError("O campo 'forma_pagamento' é obrigatório.")
         
-        # Exemplo: Se quiser travar os tipos aceitos
+        #Tipos de pagamento aceitos(Ficticio):
         formas_aceitas = ["Pix", "Cartao_Credito", "Cartao_Debito", "Boleto"]
         if value not in formas_aceitas:
             raise ValueError(f"Forma de pagamento inválida. Aceitos: {', '.join(formas_aceitas)}")
             
         return value
-
+    
+class FinalizarPedidoSerializer(BaseSerializer):  
     # Valida o estado do carrinho no banco
     def validate(self, data):
+        print(f"DEBUG: Estamos dentro do validate geral")
         cliente_id = self.context.get('cliente_id')
         
-        carrinho = Carrinho.objects(Cliente_id=str(cliente_id)).first()
+        carrinho = Carrinho.objects(Cliente_id=ObjectId(str(cliente_id))).first()
+        print(f"Carrinho do cliente: {carrinho}")
         
+        print(f"id do cliente no serializer:{cliente_id}")
         if not carrinho or not carrinho.Itens:
             raise ValueError("Não foi possível finalizar o pedido: Seu carrinho está vazio ou não existe.")
         

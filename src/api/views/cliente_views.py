@@ -42,7 +42,7 @@ def login_cliente(request):
 
     except Exception as e:
         # Aqui  captura erros técnicos inesperados (500)
-        return error(message="Erro interno no servidor.", status=500)
+        return error(message=str(e), status=500)
 
 @api_view(["POST"])
 def cadastrar_cliente(request):

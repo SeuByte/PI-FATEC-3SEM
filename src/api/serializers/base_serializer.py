@@ -35,6 +35,13 @@ class BaseSerializer:
                     self.errors[campo] = str(e)
             else:
                 self.validated_data[campo] = valor
+                
+        if hasattr(self, 'validate'):
+            try:
+                # Passa os dados já validados pelos campos para o validador geral
+                self.validated_data = self.validate(self.validated_data)
+            except ValueError as e:
+                self.errors['non_field_errors'] = str(e)        
             
         return len(self.errors) == 0
                     

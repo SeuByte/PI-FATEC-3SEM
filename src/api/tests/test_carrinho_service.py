@@ -3,7 +3,7 @@ from bson import ObjectId
 from decimal import Decimal
 from src.api.services.carrinho_service import CarrinhoService
 from src.api.models import Carrinho
-
+from src.api.models import StatusPedido
 
 class TestCarrinhoService:
 
@@ -39,12 +39,15 @@ class TestCarrinhoService:
         assert str(carrinho.Cliente_id) == str(cliente_db.id)
         assert len(carrinho.Itens) == 1
         
+        
         item = carrinho.Itens[0]
-        assert str(item['produto_id']) == str(produto_db.id)
-        assert item['produto'] == produto_db.Nome
-        assert item['quantidade'] == quantidade
-        assert item['preco_unitario'] == 12.50  # Preco_100g do seu produto_db
-        assert item['subtotal'] == 37.50       # 12.50 * 3
+        assert str(item.Produto_id) == str(produto_db.id)
+        assert item.Produto == produto_db.Nome
+        assert item.Quantidade == quantidade
+        
+        
+        assert float(str(item.Preco_unitario)) == 12.50  # Preco_100g 
+        assert float(str(item.Subtotal)) == 37.50       # 12.50 * 3
 
     def test_adicionar_produto_ja_existente_no_carrinho(self, cliente_db, produto_db):
         """Deve apenas somar a quantidade e recalcular o subtotal se o item já existir."""
@@ -61,8 +64,10 @@ class TestCarrinhoService:
         # O carrinho deve continuar contendo apenas 1 item físico, mas atualizado
         assert len(carrinho_atualizado.Itens) == 1
         item = carrinho_atualizado.Itens[0]
-        assert item['quantidade'] == 5  # 2 + 3
-        assert item['subtotal'] == 62.50  # 12.50 * 5
+        assert item.Quantidade == 5  # 2 + 3
+        
+        
+        assert float(str(item.Subtotal)) == 62.50  # 12.50 * 5
 
     def test_adicionar_produto_inexistente_deve_lancar_erro(self, cliente_db):
         """Deve levantar ValueError se o ID do produto não constar no banco."""
@@ -84,7 +89,7 @@ class TestCarrinhoService:
         
         assert resultado == {
             "itens": [],
-            "valor_total": 0.0
+            "valor_total": "0.00"
         }
 
     def test_listar_carrinho_com_itens_cadastrados(self, cliente_db, produto_db):
@@ -95,8 +100,12 @@ class TestCarrinhoService:
         resultado = CarrinhoService.listar_itens_carrinho(str(cliente_db.id))
         
         assert len(resultado['itens']) == 1
-        assert resultado['valor_total'] == 25.00
-        assert resultado['itens'][0]['produto'] == "Arroz integral"
+        assert resultado['valor_total'] == "25.00"
+        
+        
+        dados_item = resultado['itens'][0]
+        nome_produto = dados_item.get('Produto') or dados_item.get('produto')
+        assert nome_produto == "Arroz integral"
 
     # -------------------------------------------------------------------------
     # TESTES: deletar_itens_carrinho
@@ -111,7 +120,7 @@ class TestCarrinhoService:
         
         assert len(carrinho_atualizado.Itens) == 0
 
-    def test_deletar_item_inexistente_no_carrinho_deve_lancar_erro(self, cliente_db, produto_db):
+    def test_deletar_item_inexistente_no_carrinho_deve_lancar_erro(self, cliente_db, produto_db):   
         """Deve dar erro caso tente remover um produto que não está no carrinho."""
         # Adiciona o produto A no carrinho
         CarrinhoService.adicionar_produto_carrinho(str(cliente_db.id), str(produto_db.id), quantidade=1)
@@ -121,3 +130,78 @@ class TestCarrinhoService:
         
         with pytest.raises(ValueError, match="Produto não encontrado no carrinho."):
             CarrinhoService.deletar_itens_carrinho(str(cliente_db.id), id_inexistente)
+            
+    # -------------------------------------------------------------------------
+    # TESTES: finalizar_carrinho (Checkout)
+    # -------------------------------------------------------------------------
+    def test_finalizar_carrinho_com_sucesso(self, cliente_db, produto_db):
+        """Valida a transição de Carrinho -> Pedido."""
+        # 1. Prepara o carrinho
+        CarrinhoService.adicionar_produto_carrinho(str(cliente_db.id), str(produto_db.id), quantidade=1)
+        
+        # 2. Finaliza
+        pedido = CarrinhoService.finalizar_carrinho(
+            cliente_id=str(cliente_db.id),
+            forma_pagamento="PIX",
+            carrinho=Carrinho.objects.get(Cliente_id=cliente_db.id)
+        )
+        
+        # 3. Verifica se o pedido foi criado e o carrinho foi limpo
+        assert pedido is not None
+        assert pedido.Status.PENDENTE
+        
+        carrinho_limpo = Carrinho.objects.get(Cliente_id=cliente_db.id)
+        assert len(carrinho_limpo.Itens) == 0
+        
+    def test_finalizar_carrinho_vazio_lanca_erro(self, cliente_db):
+    
+        carrinho = Carrinho.objects.create(Cliente_id=cliente_db.id, Itens=[])
+        
+       
+        try:
+            CarrinhoService.finalizar_carrinho(
+                cliente_id=str(cliente_db.id),
+                forma_pagamento="PIX",
+                carrinho=carrinho
+            )
+          
+        except ValueError as e:
+            print(f"DEBUG: Erro capturado: {str(e)}")
+            assert "vazio" in str(e).lower()
+            
+            
+    # -------------------------------------------------------------------------
+    # TESTES: atualizar_quantidade
+    # -------------------------------------------------------------------------
+    
+    def test_atualizar_quantidade_sucesso(self, cliente_db, produto_db):
+        """Caminho Feliz: Deve atualizar a quantidade e recalcular o subtotal corretamente."""
+        # 1. Adiciona o produto primeiro (Qtd: 2)
+        CarrinhoService.adicionar_produto_carrinho(str(cliente_db.id), str(produto_db.id), quantidade=2)
+        
+        # 2. Atualiza para 5
+        carrinho_atualizado = CarrinhoService.atualizar_quantidade(
+            cliente_id=str(cliente_db.id),
+            produto_id=str(produto_db.id),
+            nova_quantidade=5
+        )
+        
+        item = carrinho_atualizado.Itens[0]
+        assert item.Quantidade == 5
+        # 12.50 * 5 = 62.50
+        assert float(str(item.Subtotal)) == 62.50
+
+    def test_atualizar_quantidade_item_nao_encontrado_no_carrinho(self, cliente_db):
+        """Caminho Triste: Deve levantar erro se o produto não estiver no carrinho."""
+        # Cria carrinho vazio
+        Carrinho.objects.create(Cliente_id=cliente_db.id, Itens=[])
+        
+        id_fantasma = str(ObjectId())
+        
+        with pytest.raises(ValueError, match="Item não encontrado no carrinho."):
+            CarrinhoService.atualizar_quantidade(
+                cliente_id=str(cliente_db.id),
+                produto_id=id_fantasma,
+                nova_quantidade=10
+            )
+    

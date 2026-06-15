@@ -81,12 +81,12 @@ def cliente_db(dados_cliente_valido):
     return cliente
 @pytest.fixture
 def usuario_autenticado(cliente_db):
-    # Criamos um "objeto fake" que o Django vai aceitar
+    #  um "objeto fake" que o Django vai aceitar
     # O DRF só precisa que o objeto tenha is_authenticated = True
     user_fake = SimpleNamespace(
         pk=ObjectId(cliente_db.id),
         email=cliente_db.Email
-        # Se precisar de mais alguma coisa (ex: username), adicione aqui
+        
     )
     return user_fake
 

@@ -1,18 +1,20 @@
 from rest_framework.decorators import api_view
 from src.api.services.carrinho_service import CarrinhoService
-from src.api.serializers.carrinho_serializer import CarrinhoSerializer
+from src.api.serializers.carrinho_serializer import CarrinhoSerializer, FinalizarPedidoSerializer
 from src.api.models import Clientes
 from src.api.utils.auth_utils import token_required
 from src.api.utils.response import success, error
-from rest_framework.response import Response
+from rest_framework.response import Response    
 from bson.errors import InvalidId
 import traceback
 
-@api_view(["POST"])
 @token_required
+@api_view(["POST"])
 def adicionar_ao_carrinho(request):
     serializer = CarrinhoSerializer(data=request.data)
     
+    if not serializer.is_valid(): 
+        return error(message=serializer.errors, status=400)
     if serializer.is_valid():
         print(f"DEBUG: validated_data completo: {serializer.validated_data}")
         try:
@@ -55,6 +57,7 @@ def listar_carrinho(request):
 @api_view(["DELETE"])    
 @token_required
 def remover_item_carrinho(request):
+    # Busca o cliente usando o email injetado na request pelo middleware de JWT
     try:
         email_cliente = request.user_email
         cliente = Clientes.objects(Email=email_cliente).first()
@@ -62,6 +65,8 @@ def remover_item_carrinho(request):
         if not cliente:
             return Response({"error": "Cliente não encontrado"}, status=404)
         produto_id = request.data.get('produto_id')
+        
+    #Verificamos se o produto possa ser um produto "fantasma"
         if not produto_id:
             return Response({'error': "O campo 'produto_id é obrigatorio no corpo da requisição"}, status=400)
         carrinho_atualizado = CarrinhoService.deletar_itens_carrinho(str(cliente.id), produto_id)
@@ -75,10 +80,38 @@ def remover_item_carrinho(request):
     except Exception as e:
         return Response({"error": f"Erro interno ao remover item: {str(e)}"}, status=500)
     
+@api_view(["PATCH"])
+@token_required
+def atualizar_quantidade_view(request):
+    serializer = CarrinhoSerializer(data=request.data)
     
+    if not serializer.is_valid():
+        return error(message=serializer.errors, status=400)
+
+    try:
+        cliente = Clientes.objects(Email=request.user_email).first()
+        if not cliente:
+            return error(message="Cliente não encontrado", status=404)
+            
+        # Pegue os dados do serializer, não do request.data bruto
+        data = serializer.validated_data
+        
+        CarrinhoService.atualizar_quantidade(
+            cliente_id=str(cliente.id),
+            produto_id=data['produto_id'],
+            nova_quantidade=int(data['quantidade'])
+        )
+        return success(message="Carrinho atualizado com sucesso!", status=200)
+            
+    except ValueError as e:
+        return error(message=str(e), status=400)
+    except Exception as e:
+        # Seu log de erro detalhado continua aqui
+        return error(message="Erro interno ao atualizar", status=500) 
 @api_view(["POST"])
 @token_required
 def finalizar_carrinho(request):
+    
     try:
         email_cliente = request.user_email
         cliente = Clientes.objects(Email=email_cliente).first()
@@ -87,16 +120,15 @@ def finalizar_carrinho(request):
             return error(message="Cliente não encontrado.", status=404)
         
         forma_pagamento = request.data.get("forma_pagamento")
-        if not forma_pagamento:
-            return error(message="O campo 'forma_pagamento' é obrigatório", status=400)
-        
-        serializer = CarrinhoSerializer(data=request.data, context={'cliente_id': cliente.id})
+       
+        serializer = FinalizarPedidoSerializer(data=request.data, context={'cliente_id': cliente.id})
         
         if serializer.is_valid():
             
         
             carrinho_validado = serializer.context.get('carrinho_validado')
-            
+            print(f"Itens no carrinho validado:{carrinho_validado}")
+           
             novo_pedido = CarrinhoService.finalizar_carrinho(
                 cliente_id = cliente.id,
                 forma_pagamento = forma_pagamento,
