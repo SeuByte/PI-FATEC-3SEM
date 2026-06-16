@@ -30,7 +30,7 @@ urlpatterns = [
     path('editar_carrinho/', atualizar_quantidade_view, name='editar_carrinho'),#Funcionando
     path('listar_carrinho/', listar_carrinho, name='adicionar_carrinho'),#Funcionando
     path('remover_item_carrinho/', remover_item_carrinho, name='remover_item_carrinho' ),#Funcionando
-    path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho')#Funcionando
+    path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho'),#Funcionando
   
    #Recuperação de Senha
   
