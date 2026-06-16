@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from django.apps import AppConfig
 from mongoengine import connect
 
 class ApiConfig(AppConfig):
@@ -7,6 +6,7 @@ class ApiConfig(AppConfig):
     name = 'src.api'
 
     def ready(self):
+        print("CONEXAO SUCEDIDA")
         connect(
             db="Teste",
             host="mongodb://localhost:27017/"

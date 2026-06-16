@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'src.usuarios',
     'rest_framework',
+    
 
     
 ]
