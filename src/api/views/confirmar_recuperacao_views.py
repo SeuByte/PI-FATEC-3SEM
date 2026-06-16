@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from src.usuarios.models import (
-    RecuperarSenhaModel
+    RecuperarSenhaModel)
 from rest_framework.decorators import api_view
 
 from src.api.serializers.confirmar_recuperacao_serializer import (
