@@ -14,8 +14,7 @@ from django.contrib.auth.hashers import make_password
 from types import SimpleNamespace
 from django.urls import reverse
 from src.api.utils.auth_utils import gerar_token
-from src.api.utils import auth_utils
-from unittest.mock import patch
+from src.usuarios.models import FuncionarioModel
 
 #  Configuração do banco para apagar sempre os dados testes
 @pytest.fixture(autouse=True)
@@ -108,3 +107,16 @@ def auth_setup():
         "url": reverse('rota-de-teste'),
         "token": gerar_token("usuario@teste.com")
     }
+
+@pytest.fixture
+def funcionario_db(db):
+
+    return FuncionarioModel.objects.create(
+        nome_completo="João Silva",
+        email="funcionario@email.com",
+        telefone="11999999999",
+        senha="123456",
+        cargo="Analista"
+    )
+    
+    
