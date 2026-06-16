@@ -30,5 +30,11 @@ media/
 # Logs
 *.log
 
-#Banco de dados não relacional no container do Docker
+# MongoDB
 .mongodb_data/
+*.bson
+*.json
+
+# Planilhas (Segurança e privacidade)
+*.xlsx
+*.xls

@@ -1,10 +1,10 @@
 #Caso queira importar os dados do excel por qualquer motivo: 
 #1- python manage.py shell
-#2- from api.importers.excel_importer import importa_excel
+#2- from src.api.importers.excel_importer import importa_excel
 #3 -importa_excel(r"C:\Users\macro\Downloads\PRODUTOS LOJA 27-4.xlsx")
 
 import pandas as pd
-from src.core.models import Produtos
+from src.api.models import Produtos
 
 
 def importa_excel(file_path):
