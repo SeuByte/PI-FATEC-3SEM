@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     "rest_framework",
     'src.api',
     'src.usuarios'
-    'rest_framework',
-    'src.api'
     
 ]
 

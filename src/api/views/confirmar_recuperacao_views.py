@@ -1,88 +1,59 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from usuarios.models import (
-    RecuperarSenhaModel
-)
-
-from src.api.models import (
-    Clientes
-)
+from rest_framework.decorators import api_view
 
 from src.api.serializers.confirmar_recuperacao_serializer import (
     ConfirmarRecuperacaoSerializer
 )
 
+from src.api.services.recuperacao_senha_service import (
+    RecuperarSenhaService
+)
 
-class ConfirmarRecuperacaoView(APIView):
+from src.api.utils.response import (
+    success,
+    error
+)
 
-    def post(self, request):
 
-        serializer = ConfirmarRecuperacaoSerializer(
-            data=request.data
-        )
+@api_view(["POST"])
+def confirmar_recuperacao(request):
 
-        serializer.is_valid(
-            raise_exception=True
-        )
+    serializer = ConfirmarRecuperacaoSerializer(
+        data=request.data
+    )
 
-        email = serializer.validated_data[
-            "email"
-        ]
+    if serializer.is_valid():
 
-        token = serializer.validated_data[
-            "token"
-        ]
+        try:
 
-        nova_senha = serializer.validated_data[
-            "nova_senha"
-        ]
+            # Recupera os dados validados
+            dados = serializer.validated_data
 
-        registro = (
-            RecuperarSenhaModel.objects.filter(
-                email=email,
-                token=token,
-                utilizado=False
-            ).first()
-        )
+            # Chama a service corretamente
+            RecuperarSenhaService.confirmar_recuperacao(
+                email=dados["email"],
+                token=dados["token"],
+                nova_senha=dados["nova_senha"]
+            )
 
-        if not registro:
+            return success(
+                message="Senha alterada com sucesso."
+            )
 
-            return Response(
-                {
-                    "erro":
-                    "Token inválido"
-                },
+        except ValueError as e:
+
+            return error(
+                message=str(e),
                 status=400
             )
 
-        cliente = (
-            Clientes.objects(
-                Email=email
-            ).first()
-        )
+        except Exception:
 
-        if not cliente:
-
-            return Response(
-                {
-                    "erro":
-                    "Cliente não encontrado"
-                },
-                status=404
+            return error(
+                message="Erro interno no servidor.",
+                status=500
             )
 
-        cliente.Senha = nova_senha
-
-        cliente.save()
-
-        registro.utilizado = True
-
-        registro.save()
-
-        return Response(
-            {
-                "mensagem":
-                "Senha alterada com sucesso"
-            }
-        )
+    return error(
+        message=serializer.errors,
+        status=400
+    )

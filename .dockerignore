@@ -1,9 +1,0 @@
-.git
-venv
-__pycache__
-*.pyc
-.env
-design.md
-README.md
-*.pdf
-documentacao

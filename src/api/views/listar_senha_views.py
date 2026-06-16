@@ -1,18 +1,42 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from src.api.services.recuperacao_senha_service import (RecuperarSenhaService)
-from src.api.models import Clientes
+from rest_framework.decorators import api_view
 
-class ListarSenhaViews(APIView):
-    def post(self, request):
-        
-        email = request.data.get("email")        
-        cliente = Clientes.objects(Email=email).first()
-        
-        if not cliente:
+from src.api.services.recuperacao_senha_service import (
+    RecuperarSenhaService
+)
 
-            return Response({"erro": "Cliente não encontrado"}, status=404)
+from src.api.utils.response import (
+    success,
+    error
+)
 
-        token = (RecuperarSenhaService.gerar_token(email))
 
-        return Response({"mensagem": "Token enviado para o email."})
+@api_view(["POST"])
+def recuperar_senha(request):
+
+    try:
+
+        email = request.data.get(
+            "email"
+        )
+
+        RecuperarSenhaService.gerar_token(
+            email
+        )
+
+        return success(
+            message="Token enviado para o email."
+        )
+
+    except ValueError as e:
+
+        return error(
+            message=str(e),
+            status=404
+        )
+
+    except Exception:
+
+        return error(
+            message="Erro interno no servidor.",
+            status=500
+        )
