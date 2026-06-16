@@ -1,3 +1,1 @@
-from django.test import TestCase
-
-# Create your tests here.
+# Testes Feitos com PYTest.ini na Pasta de src/api/tests
