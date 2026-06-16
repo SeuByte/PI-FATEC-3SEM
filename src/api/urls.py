@@ -2,6 +2,7 @@ from django.urls import path
 from src.api.views.produto_views import listar_produtos, listar_produto_id, deletar_produto, editar_produto, criar_produto
 from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida, editar_cliente, deletar_cliente
 from src.api.views.carrinho_views import adicionar_ao_carrinho, listar_carrinho, remover_item_carrinho, finalizar_carrinho, atualizar_quantidade_view
+from src.api.views.dashboard_views import dashboard_stats
 from src.api.views.confirmar_recuperacao_views import ConfirmarRecuperacaoView
 from src.api.views.listar_senha_views import ListarSenhaViews
 from src.api.views.funcionario_views import CadastroFuncionarioView
@@ -40,5 +41,8 @@ urlpatterns = [
     path('editar_carrinho/', atualizar_quantidade_view, name='editar_carrinho'),#Funcionando
     path('listar_carrinho/', listar_carrinho, name='adicionar_carrinho'),#Funcionando
     path('remover_item_carrinho/', remover_item_carrinho, name='remover_item_carrinho' ),#Funcionando
-    path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho')#Funcionando
+    path('finalizar_carrinho/', finalizar_carrinho, name='finalizar_carrinho'),#Funcionando
+    
+   # Dashboard
+    path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio')
 ]
