@@ -113,7 +113,7 @@ class ClienteSerializer(BaseSerializer):
     
    def validate_Telefone(self, value):
       tel_limpo = ''.join(filter(str.isdigit, str(value)))
-      if len(tel_limpo) != 10:
+      if len(tel_limpo) != 11:
           raise ValueError("O telefone deve conter 10 digitos")
   
       return tel_limpo
