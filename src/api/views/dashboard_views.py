@@ -1,40 +1,69 @@
 from rest_framework.decorators import api_view
-from src.api.models import Produtos, Pedidos, StatusPedido
+
+from src.api.models import (
+    Clientes,
+    Produtos,
+    Pedidos,
+    StatusPedido
+)
+
 from src.api.services.dashboard_service import DashboardService
 from src.api.utils.response import success
 
 
 @api_view(["GET"])
 def dashboard_stats(request):
+
+    total_clientes = Clientes.objects.count()
+
     total_produtos = Produtos.objects.count()
-    resumo_pedidos = DashboardService.get_resumo_pedidos()
-    receita_total = sum(float(pedido.Valor_total) for pedido in Pedidos.objects(
+
+    total_pedidos = Pedidos.objects.count()
+
+    pedidos_pendentes = Pedidos.objects(
+        Status=StatusPedido.PENDENTE
+    ).count()
+
+    pedidos_aprovados = Pedidos.objects(
+        Status=StatusPedido.APROVADO
+    ).count()
+
+    pedidos_cancelados = Pedidos.objects(
+        Status=StatusPedido.Cancelado
+    ).count()
+
+    receita_total = sum(
+        float(pedido.Valor_total)
+        for pedido in Pedidos.objects(
             Status=StatusPedido.APROVADO
         )
     )
 
-    ticket_medio = (receita_total /
-        resumo_pedidos["total_pedidos"]
-        if resumo_pedidos["total_pedidos"] > 0
+    ticket_medio = (
+        receita_total / total_pedidos
+        if total_pedidos > 0
         else 0
     )
 
     return success({
 
+        "total_clientes":
+            total_clientes,
+
         "total_produtos":
             total_produtos,
 
         "total_pedidos":
-            resumo_pedidos["total_pedidos"],
+            total_pedidos,
 
         "pedidos_pendentes":
-            resumo_pedidos["pendentes"],
+            pedidos_pendentes,
 
         "pedidos_aprovados":
-            resumo_pedidos["aprovados"],
+            pedidos_aprovados,
 
         "pedidos_cancelados":
-            resumo_pedidos["cancelados"],
+            pedidos_cancelados,
 
         "receita_total":
             receita_total,
