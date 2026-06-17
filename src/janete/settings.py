@@ -30,8 +30,10 @@ INSTALLED_APPS = [
     
     #My Apps
     'src.api',
+    'corsheaders',
     'src.usuarios',
     'rest_framework',
+    
 
     
 ]
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -139,3 +142,6 @@ EMAIL_HOST_PASSWORD = config(
     'EMAIL_HOST_PASSWORD'
 )
 SECRET_KEY = "kR9#bL2$mP8&zX5@qW1!vN4(tY7^jH3*cC6_dF9"
+
+#Permite que qualquer front consuma a API
+CORS_ALLOW_ALL_ORIGINS = True

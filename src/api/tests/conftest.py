@@ -18,17 +18,26 @@ from src.usuarios.models import FuncionarioModel
 
 #  Configuração do banco para apagar sempre os dados testes
 @pytest.fixture(autouse=True)
-def setup_db():
+def force_db_connection():
+ 
+    
+    # Desconecta para garantir que não haja sujeira
     disconnect()
-    connect('teste_db_teste', host='mongodb://localhost:27017', port=27017)
+    
+    # Conecta no banco de teste usando o alias 'default'
+    connect('teste_db_teste', host='mongodb://localhost:27017', alias='default')
+    
+    # Esta linha é o segredo: ela garante que o modelo use a conexão 'default'
+    Clientes.objects.delete()
     Produtos.objects.delete()
-    Clientes.objects.all().delete()
-
+    
     yield
     disconnect()
     
 
 #  Fixture para o cliente da API
+
+        
 @pytest.fixture
 def client():
     return APIClient()
@@ -44,7 +53,6 @@ def produto_db():
         Grupo="Graos",
         Preco_100g=Decimal128("12.50")
     )
-    
 
 @pytest.fixture
 def dados_cliente_valido():

@@ -22,7 +22,7 @@ urlpatterns = [
     path('listar_cliente/', listar_clientes, name='listar_clientes'),#Funcionando
     path('login_cliente/', login_cliente, name='login_cliente'),#Funcionando
     path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),#Pagina que apenas é possivel acessar após ter efeutado o login cliente(pagina de teste)
-    path('rota-de-teste/', pagina_protegida, name='rota-de-teste'),
+
 
    #Carrinho
    

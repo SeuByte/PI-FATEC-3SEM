@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from src.api.serializers.cliente_serializer import ClienteSerializer
 from src.api.services.cliente_service import ClienteService
+from src.api.models import Clientes
 from src.api.utils.response import success, error
 from django.core.exceptions import ValidationError
 from src.api.utils.auth_utils import gerar_token, token_required
@@ -65,7 +66,17 @@ def cadastrar_cliente(request):
     return error(message=serializer.errors, status=400)
 
 @api_view(["PUT"])
+@token_required
 def editar_cliente( request, cliente_id):
+    # 1. Busca o ID real do usuário logado baseado no e-mail do token
+    try:
+        usuario_logado = Clientes.objects.get(Email=request.user_email)
+    except Clientes.DoesNotExist:
+        return Response({"erro": "Usuário não encontrado."}, status=404)
+
+    # 2. Compara o ID do banco (do e-mail) com o ID da URL
+    if str(usuario_logado.id) != str(cliente_id):
+        return Response({"erro": "Acesso negado. Você não pode editar outro perfil."}, status=403)
     serializer = ClienteSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         try:
@@ -79,9 +90,23 @@ def editar_cliente( request, cliente_id):
         return Response({"erro": serializer.errors}, status=400)
     
 @api_view(["DELETE"])
+@token_required
 def deletar_cliente(request, cliente_id):
+   # 1. Busca o cliente real baseado no e-mail contido no token
+    try:
+        usuario_logado = Clientes.objects.get(Email=request.user_email)
+    except Clientes.DoesNotExist:
+        return Response({"erro": "Usuário autenticado não encontrado."}, status=404)
+
+    # 2. SEGURANÇA: Bloqueia se o ID do banco for diferente do ID na URL
+    if str(usuario_logado.id) != str(cliente_id):
+        return Response({"erro": "Acesso negado. Você só pode deletar o seu próprio perfil."}, status=403)
+
+    # 3. Executa a deleção
     try:
         ClienteService.deletar_cliente(cliente_id)
         return Response({"mensagem": "Cliente deletado com sucesso!"}, status=200)
     except ValueError as e:
         return Response({"erro": str(e)}, status=400)
+    except Exception as e:
+        return Response({"erro": "Erro inesperado ao deletar cliente."}, status=500)
