@@ -28,7 +28,7 @@ def test_recuperar_senha_sucesso(
 
     # Falhas
 
-    @pytest.mark.django_db
+@pytest.mark.django_db
 def test_recuperar_senha_cliente_inexistente(
     client
 ):

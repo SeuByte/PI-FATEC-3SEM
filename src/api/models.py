@@ -2,6 +2,7 @@
 import mongoengine as me
 from mongoengine import EnumField
 from enum import Enum
+import datetime
 
 class StatusPedido(Enum):
     PENDENTE = "Pendente"
@@ -54,6 +55,8 @@ class Pedidos(me.Document):
     Status = EnumField(StatusPedido, default=StatusPedido.PENDENTE, required=True)
     Forma_pagamento = me.StringField(required=True)
     Valor_total = me.DecimalField(precision=2, force_string=True, required=True)
+    Data_criacao = me.DateTimeField(default=datetime.datetime.now)
+    
 
 class Carrinho(me.Document):
     Cliente_id = me.ObjectIdField(required=True)
