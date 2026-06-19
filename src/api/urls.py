@@ -6,6 +6,7 @@ from src.api.views.listar_senha_views import recuperar_senha
 from src.api.views.funcionario_views import cadastrar_funcionario, listar_funcionarios, buscar_funcionario, atualizar_funcionario, deletar_funcionario
 from src.api.views.cliente_views import listar_clientes, cadastrar_cliente, login_cliente, pagina_protegida, editar_cliente, deletar_cliente
 from src.api.views.dashboard_views import dashboard_stats
+from src.api.views.admin_views import login_admin
 
 urlpatterns = [
     # Produtos
@@ -45,8 +46,11 @@ urlpatterns = [
     path('funcionarios_atualizar/<int:id_funcionario>/', atualizar_funcionario, name='atualizar_funcionario'),
     path('funcionarios_deletar/<int:id_funcionario>/', deletar_funcionario, name='deletar_funcionario'),
 
- 
-path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio'),
+    #Dashboard
+    path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio'),
 
+    
+    #Admin
+    path('login_admin/', login_admin, name='login_admin'),
 ]
 

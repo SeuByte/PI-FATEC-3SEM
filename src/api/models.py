@@ -61,9 +61,12 @@ class Carrinho(me.Document):
     Valor_frete = me.Decimal128Field(null=True, default=0.0)
     Tipo_frete = me.StringField()
 
-class Admin(me.document):
+class Admin(me.Document):
     Email = me.EmailField(required=True, unique=True)
     Senha = me.StringField(required=True)
+    IsAdmin = me.BooleanField(default=True)
+    
+    
     
     
     
