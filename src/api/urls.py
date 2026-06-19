@@ -9,6 +9,7 @@ from src.api.views.dashboard_views import dashboard_stats
 from src.api.views.admin_views import login_admin, painel_admin
 
 urlpatterns = [
+  
     # Produtos
     path('produtos/', listar_produtos, name='listar_produtos'),#Funcionando
     path('produtos/<str:id>/', listar_produto_id, name='listar_produto_id'),#Funcionando
@@ -48,7 +49,6 @@ urlpatterns = [
 
     #Dashboard
     path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio'),
-
     
     #Admin
     path('login_admin/', login_admin, name='login_admin'),#Funcionando
