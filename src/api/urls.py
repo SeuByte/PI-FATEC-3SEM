@@ -45,8 +45,8 @@ urlpatterns = [
     path('funcionarios_atualizar/<int:id_funcionario>/', atualizar_funcionario, name='atualizar_funcionario'),
     path('funcionarios_deletar/<int:id_funcionario>/', deletar_funcionario, name='deletar_funcionario'),
 
- 
-path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio'),
+  #Dashboard
+    path('dashboard_relatorio/', dashboard_stats, name='dashboard_relatorio'),
 
 ]
 
