@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from functools import wraps
 from rest_framework.response import Response
 from src.janete.settings import SECRET_KEY
+from django.http import HttpResponseForbidden
+from src.api.services.admin_service import AdminService
 
 # Utilizamos autenticação stateless (JWT) para não depender de sessões do django, tendo em vista que as bibliotecas para tal não conversam com o Mongo.
 
@@ -44,5 +46,22 @@ def token_required(view_func):
             # Captura qualquer outro erro de formatação/acesso
             return Response({"error": "Erro na validação do token"}, status=401)
             
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+
+
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # 1. Verifica se o token_required passou o email (via request.user_email)
+        email = getattr(request, 'user_email', None)
+    
+        if email not in AdminService.EMAILS_ADMINS:
+            return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+        
         return view_func(request, *args, **kwargs)
     return wrapper

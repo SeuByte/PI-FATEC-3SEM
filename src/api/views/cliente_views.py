@@ -33,7 +33,8 @@ def login_cliente(request):
         senha = request.data.get('Senha')
         
         ClienteService.autenticar(email, senha)
-       
+        
+
         token = gerar_token(email)
         return success(message="Login efetuado com sucesso!", data={"token": token})
 
