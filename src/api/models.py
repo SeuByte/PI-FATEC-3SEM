@@ -60,7 +60,10 @@ class Carrinho(me.Document):
     Itens = me.ListField(me.EmbeddedDocumentField(ItemCarrinho))
     Valor_frete = me.Decimal128Field(null=True, default=0.0)
     Tipo_frete = me.StringField()
-    
+
+class Admin(me.document):
+    Email = me.EmailField(required=True, unique=True)
+    Senha = me.StringField(required=True)
     
     
     
