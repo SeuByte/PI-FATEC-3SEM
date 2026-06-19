@@ -75,6 +75,9 @@ def dashboard_stats(request):
             DashboardService.get_contagem_por_grupo(),
 
         "relatorio estoque":
-            DashboardService.get_relatorio_estoque()
+            DashboardService.get_relatorio_estoque(),
+            
+        "produtos":
+            DashboardService.get_produtos(),
 
     })
