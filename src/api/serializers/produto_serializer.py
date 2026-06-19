@@ -26,6 +26,7 @@ class ProdutoSerializer(BaseSerializer):
             "Estoque": getattr(self.obj, 'Estoque', 0),
             "Nome": getattr(self.obj, 'Nome', ''),
             "Valor_venda": format_money(getattr(self.obj, 'Valor_venda', 0)),
+            "Unidade": self.obj.Unidade,
             "Grupo": getattr(self.obj, 'Grupo', ''),
             "Preco_100g": format_money(getattr(self.obj, 'Preco_100g', 0)),
         }
