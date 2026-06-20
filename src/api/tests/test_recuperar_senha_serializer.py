@@ -1,16 +1,19 @@
 import pytest
-from src.api.serializers.recuperacao_senha_serializer import RecuperarSenhaSerializer
-
+from src.api.serializers.recuperacao_senha_serializer import (
+    RecuperarSenhaSerializer
+)
 
 
 @pytest.mark.django_db
 class TestRecuperarSenhaSerializer:
 
-    # Deve validar um payload válido
     def test_should_validate_valid_payload(self):
 
         payload = {
-            "email": "teste@email.com"
+            "email": "teste@email.com",
+            "token": "123456",
+            "nova_senha": "Senha1234",
+            "confirmar_senha": "Senha1234"
         }
 
         serializer = RecuperarSenhaSerializer(
@@ -20,20 +23,24 @@ class TestRecuperarSenhaSerializer:
         assert serializer.is_valid()
         assert serializer.errors == {}
 
-    # Deve conter apenas o campo email
     def test_should_contain_expected_fields(self):
 
         serializer = RecuperarSenhaSerializer()
 
         assert set(serializer.fields.keys()) == {
-            "email"
+            "email",
+            "token",
+            "nova_senha",
+            "confirmar_senha"
         }
 
-    # Não deve validar email inválido
     def test_should_not_validate_invalid_email(self):
 
         payload = {
-            "email": "email-invalido"
+            "email": "email-invalido",
+            "token": "123456",
+            "nova_senha": "Senha1234",
+            "confirmar_senha": "Senha1234"
         }
 
         serializer = RecuperarSenhaSerializer(
@@ -43,23 +50,12 @@ class TestRecuperarSenhaSerializer:
         assert not serializer.is_valid()
         assert "email" in serializer.errors
 
-    # Não deve validar quando email não for enviado
     def test_should_not_validate_missing_email(self):
 
-        payload = {}
-
-        serializer = RecuperarSenhaSerializer(
-            data=payload
-        )
-
-        assert not serializer.is_valid()
-        assert "email" in serializer.errors
-
-    # Não deve validar email vazio
-    def test_should_not_validate_empty_email(self):
-
         payload = {
-            "email": ""
+            "token": "123456",
+            "nova_senha": "Senha1234",
+            "confirmar_senha": "Senha1234"
         }
 
         serializer = RecuperarSenhaSerializer(
@@ -68,3 +64,33 @@ class TestRecuperarSenhaSerializer:
 
         assert not serializer.is_valid()
         assert "email" in serializer.errors
+
+    def test_should_not_validate_different_passwords(self):
+
+        payload = {
+            "email": "teste@email.com",
+            "token": "123456",
+            "nova_senha": "Senha1234",
+            "confirmar_senha": "Senha5678"
+        }
+
+        serializer = RecuperarSenhaSerializer(
+            data=payload
+        )
+
+        assert not serializer.is_valid()
+
+    def test_should_not_validate_short_password(self):
+
+        payload = {
+            "email": "teste@email.com",
+            "token": "123456",
+            "nova_senha": "1234567",
+            "confirmar_senha": "1234567"
+        }
+
+        serializer = RecuperarSenhaSerializer(
+            data=payload
+        )
+
+        assert not serializer.is_valid()

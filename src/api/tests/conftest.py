@@ -6,7 +6,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.janete.settings')
 django.setup()
 
 import pytest
-from mongoengine import connect, disconnect
+from mongoengine import connect, disconnect, get_connection
+from pymongo.errors import ConnectionFailure
 from rest_framework.test import APIClient
 from src.api.models import Produtos, Clientes
 from bson import Decimal128, ObjectId
@@ -19,20 +20,23 @@ from src.usuarios.models import FuncionarioModel
 #  Configuração do banco para apagar sempre os dados testes
 @pytest.fixture(autouse=True)
 def force_db_connection():
- 
-    
-    # Desconecta para garantir que não haja sujeira
-    disconnect()
-    
-    # Conecta no banco de teste usando o alias 'default'
-    connect('teste_db_teste', host='mongodb://localhost:27017', alias='default')
-    
-    # Esta linha é o segredo: ela garante que o modelo use a conexão 'default'
+
+    try:
+        get_connection(alias="default")
+    except Exception:
+        connect(
+            "teste_db_teste",
+            host="mongodb://localhost:27017",
+            alias="default"
+        )
+
     Clientes.objects.delete()
     Produtos.objects.delete()
-    
+
     yield
-    disconnect()
+
+    Clientes.objects.delete()
+    Produtos.objects.delete()
     
 
 #  Fixture para o cliente da API

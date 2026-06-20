@@ -21,22 +21,22 @@ class ConfirmarRecuperacaoSerializer(
         required=True
     )
 
-def validate(self, data):
+    def validate(self, data):
 
-    if (
-        data["nova_senha"]
-        !=
-        data["confirmar_senha"]
-    ):
+        if (
+            data["nova_senha"]
+            !=
+            data["confirmar_senha"]
+        ):
 
-        raise serializers.ValidationError(
-            "As senhas não coincidem."
-        )
+            raise serializers.ValidationError(
+                "As senhas não coincidem."
+            )
 
-    if len(data["nova_senha"]) < 8:
+        if len(data["nova_senha"]) < 8:
 
-        raise serializers.ValidationError(
-            "A senha deve ter pelo menos 8 caracteres."
-        )
+            raise serializers.ValidationError(
+                "A senha deve ter pelo menos 8 caracteres."
+            )
 
-    return data
+        return data

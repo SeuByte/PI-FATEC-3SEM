@@ -14,6 +14,6 @@ class RecuperarSenhaSerializer(serializers.Serializer):
             raise serializers.ValidationError("As Senhas Nao sao iguais")
         
         if len(senha) < 8:
-            raise serializers.ValidationError("A senha precisa ter mais que 8 caracteres")
+            raise serializers.ValidationError("A senha precisa ter pelo menos 8 caracteres")
         
         return datas

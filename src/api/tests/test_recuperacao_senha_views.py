@@ -1,8 +1,6 @@
 import pytest
 from django.urls import reverse
-from src.api.models import Clientes
 
-# Sucesso
 
 @pytest.mark.django_db
 def test_recuperar_senha_sucesso(
@@ -20,15 +18,16 @@ def test_recuperar_senha_sucesso(
 
     assert response.status_code == 200
 
+    assert response.data["success"] is True
+
     assert (
-        response.data["mensagem"]
+        response.data["message"]
         ==
         "Token enviado para o email."
     )
 
-    # Falhas
 
-    @pytest.mark.django_db
+@pytest.mark.django_db
 def test_recuperar_senha_cliente_inexistente(
     client
 ):
@@ -43,8 +42,10 @@ def test_recuperar_senha_cliente_inexistente(
 
     assert response.status_code == 404
 
+    assert response.data["success"] is False
+
     assert (
-        response.data["erro"]
+        response.data["message"]
         ==
         "Cliente não encontrado"
     )
