@@ -52,7 +52,8 @@ urlpatterns = [
     
     #Admin
     path('login_admin/', login_admin, name='login_admin'),#Funcionando
-    path('painel_adm/', painel_admin, name='painel_adm')#Rota de teste.
+    path('painel_adm/', painel_admin, name='painel_adm'),#Rota de teste.
     
+  
 ]
 
